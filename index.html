@@ -62,7 +62,17 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--
 /* grids */
 .gridbox{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
 .grid{display:grid;user-select:none;-webkit-user-select:none;min-width:max-content}
-.grid.paint{touch-action:none}
+.grid.paint .c{touch-action:none}
+.grid.paint.locked .c{touch-action:auto}
+.grid.paint .gt,.grid.paint .gh{touch-action:pan-y}
+.grid.paint.locked .c{cursor:default}
+.gridbox.editing{outline:2px solid var(--mine);outline-offset:1px}
+.editbar{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.editbar #editToggle{min-width:132px}
+.editbar #undoBtn{padding:7px 12px}
+@keyframes nudge{0%,100%{transform:none}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+.nudge{animation:nudge .3s ease 2}
+@media (prefers-reduced-motion:reduce){.nudge{animation:none}}
 .gh{position:sticky;top:0;background:var(--panel);font-size:11.5px;text-align:center;padding:6px 4px;border-bottom:1px solid var(--line);line-height:1.25;z-index:1}
 .gh b{display:block;font-family:var(--f-display);font-size:13px;color:var(--ink)}
 /* time labels take no height of their own (line-height 0 centres the text on the row's top edge), so they can never stretch a row */
@@ -268,6 +278,11 @@ button.dangerfill{background:var(--busy);border-color:var(--busy);color:#fff}
           <select id="whoSel" aria-label="Filling in for" hidden></select>
           <input type="text" id="myName" placeholder="Your name" aria-label="Your name">
           <button type="button" id="clearMine">Clear all times</button>
+          <button type="button" id="undoBtn" disabled title="Undo last change (Ctrl/Cmd+Z)">↶ Undo</button>
+        </div>
+        <div class="editbar" id="editBar" hidden>
+          <button type="button" id="editToggle" class="primary">Edit my times</button>
+          <span class="small muted" id="editHint"></span>
         </div>
         <span id="whoRow" hidden></span>
         <div class="gridbox"><div class="grid paint" id="paintGrid"></div></div>
@@ -529,11 +544,31 @@ document.addEventListener("pointerdown",e=>{if(!e.target.closest("#heatGrid"))hi
 $("heatGrid").addEventListener("pointerover",e=>{const c=e.target.closest(".c");if(c&&e.pointerType==="mouse")showDetail(c.dataset.k)});
 $("heatGrid").addEventListener("click",e=>{const c=e.target.closest(".c");if(!c)return;if(selCell)selCell.classList.remove("sel");selCell=c;c.classList.add("sel");showDetail(c.dataset.k)});
 
+/* phones: the grid scrolls normally until "Edit my times" is tapped; undo covers any slip */
+const touchFirst=(()=>{try{return matchMedia("(pointer: coarse)").matches}catch(e){return false}})();
+let editing=!touchFirst;
+function isLocked(){return touchFirst&&!editing}
+function renderEditMode(){
+  const g=$("paintGrid");g.classList.toggle("locked",isLocked());g.parentElement.classList.toggle("editing",touchFirst&&editing);
+  const t=$("editToggle");$("editBar").hidden=!touchFirst;t.textContent=editing?"Done":"Edit my times";t.classList.toggle("primary",!editing);
+  $("editHint").textContent=touchFirst?(editing?"Drag on the grid to mark times. To scroll, swipe on the time column or tap Done.":"Tap Edit my times, then drag on the grid."):"";
+}
+$("editToggle").onclick=()=>{editing=!editing;renderEditMode()};
+$("paintGrid").addEventListener("click",()=>{if(isLocked()){const t=$("editToggle");t.classList.remove("nudge");void t.offsetWidth;t.classList.add("nudge")}});
+const undoStack=[];
+function pushUndo(){undoStack.push([...S.draft]);if(undoStack.length>40)undoStack.shift();updateUndo()}
+function updateUndo(){$("undoBtn").disabled=!undoStack.length}
+function undo(){if(!undoStack.length)return;S.draft=new Set(undoStack.pop());updateUndo();paintMine();markDirty()}
+$("undoBtn").onclick=undo;
+document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&e.key.toLowerCase()==="z"&&!/^(INPUT|TEXTAREA|SELECT)$/.test((e.target&&e.target.tagName)||"")&&!$("main").hidden){e.preventDefault();undo()}});
+if(touchFirst)$("editBar").insertBefore($("undoBtn"),$("editHint"));
+renderEditMode();
+
 /* painting */
 let painting=null;
 function cellAt(x,y){const el=document.elementFromPoint(x,y);return el&&el.closest&&el.closest("#paintGrid .c")}
 function applyCell(c){if(!c)return;const k=c.dataset.k;if(painting.on)S.draft.add(k);else S.draft.delete(k);c.classList.toggle("on",painting.on)}
-$("paintGrid").addEventListener("pointerdown",e=>{const c=e.target.closest(".c");if(!c)return;e.preventDefault();painting={on:!S.draft.has(c.dataset.k)};applyCell(c);try{$("paintGrid").setPointerCapture(e.pointerId)}catch(_){}});
+$("paintGrid").addEventListener("pointerdown",e=>{const c=e.target.closest(".c");if(!c)return;if(isLocked())return;e.preventDefault();pushUndo();painting={on:!S.draft.has(c.dataset.k)};applyCell(c);try{$("paintGrid").setPointerCapture(e.pointerId)}catch(_){}});
 $("paintGrid").addEventListener("pointermove",e=>{if(!painting)return;applyCell(cellAt(e.clientX,e.clientY))});
 const endPaint=()=>{if(!painting)return;painting=null;markDirty()};
 $("paintGrid").addEventListener("pointerup",endPaint);$("paintGrid").addEventListener("pointercancel",endPaint);
@@ -544,12 +579,13 @@ $("clearMine").onclick=async()=>{
   const ok=await askConfirm({title:other?"Clear all of "+nm+"'s times?":"Clear all your times?",
     body:(other?"Every slot marked for "+nm:"Every slot you've marked")+" for this event will be erased. "+(other?"Their":"Your")+" name stays on the list.",
     ok:"Clear all times"});
-  if(!ok)return;S.draft.clear();paintMine();markDirty()};
+  if(!ok)return;pushUndo();S.draft.clear();paintMine();markDirty()};
 $("myName").addEventListener("input",()=>{S.draftName=$("myName").value;try{if(S.target==="me")localStorage.setItem("t4m.name",S.draftName)}catch(e){}markDirty();updateRemoveLabel()});
 
 /* ---------- who am I editing ---------- */
 function targetId(){return S.target==="me"?S.myId:S.target}
 function loadTarget(){
+  undoStack.length=0;updateUndo();
   const id=targetId();const r=id&&S.responses.get(id);
   S.draft=new Set(r&&Array.isArray(r.slots)?r.slots:[]);
   if(r)S.draftName=r.name||"";else if(S.target!=="me")S.draftName="";
@@ -872,8 +908,8 @@ function renderBusy(){
     l.children[1].textContent=dLabel(b.date)+" "+hhmm(b.start)+"–"+hhmm(b.end);l.children[2].textContent=b.label;box.appendChild(l)});
 }
 function busyKeys(){const out=new Set(),step=S.config.step;for(const b of S.busy)if(b.use)for(const m of times())if(m<b.end&&m+step>b.start)out.add(key(b.date,m));return out}
-$("applyAll").onclick=()=>{const bk=busyKeys();S.draft=new Set(allKeys().filter(k=>!bk.has(k)));paintMine();markDirty();$("minePanel").scrollIntoView({behavior:"smooth",block:"start"})};
-$("applyRemove").onclick=()=>{const bk=busyKeys();for(const k of bk)S.draft.delete(k);paintMine();markDirty()};
+$("applyAll").onclick=()=>{const bk=busyKeys();pushUndo();S.draft=new Set(allKeys().filter(k=>!bk.has(k)));paintMine();markDirty();$("minePanel").scrollIntoView({behavior:"smooth",block:"start"})};
+$("applyRemove").onclick=()=>{const bk=busyKeys();pushUndo();for(const k of bk)S.draft.delete(k);paintMine();markDirty()};
 
 /* ---------- demo ---------- */
 const DEMO=["Example · Ana","Example · Ben","Example · Chris","Example · Dana","Example · Eli"];
@@ -884,7 +920,6 @@ let realResponses=new Map();
 $("demoBtn").onclick=()=>{S.demo=!S.demo;mergeResponses();refreshAll(false)};
 function mergeResponses(){realResponses=new Map(S.eid?S.respDocs:[]);
   S.responses=new Map(realResponses);if(S.demo&&S.config)for(const [k,v] of demoResponses())S.responses.set(k,v);
-  if(S.dirty&&S.eid&&S.config){const nm=($("myName").value||"").trim();S.responses.set(targetId()||"__draft",{name:nm||(S.target==="me"?"You":"New response"),slots:[...S.draft]})}
   $("banner").hidden=!S.demo;$("banner").textContent="Showing 5 example respondents so you can try the page. They aren't saved and vanish when you hide them.";}
 
 /* ---------- events & routing ---------- */
@@ -992,7 +1027,7 @@ function subscribeEvent(eid){
     S.evLoaded=true;if(S.dbReady){mergeResponses();refreshAll(false)}else ready();
   },()=>{S.events.delete(eid);S.evLoaded=true;S.respLoaded=true;ready();refreshAll(false)}));
   S.unsubs.push(S.backend.watchResponses(eid,docs=>{
-    S.respDocs=new Map(docs.map(d=>[d.id,d.data]));
+    {const prev=S.respDocs,next=new Map();for(const d of docs){if(!d.pending)next.set(d.id,d.data);else if(prev.has(d.id))next.set(d.id,prev.get(d.id))}S.respDocs=next;}
     S.respLoaded=true;
     if(!S.dbReady){ready();return}
     const mine=S.target==="me"?S.myId:S.target;const wasSaved=!S.dirty;
@@ -1077,7 +1112,7 @@ async function connect(){
     signOut:async()=>{await A.signOut(auth);location.reload()},
     watchEvents:(cb,err)=>F.onSnapshot(F.collection(db,"events"),s=>cb(snapList(s)),err),
     watchEvent:(eid,cb,err)=>F.onSnapshot(F.doc(db,"events",eid),s=>cb(s.exists()?s.data():null),err),
-    watchResponses:(eid,cb,err)=>F.onSnapshot(F.collection(db,"events",eid,"responses"),s=>cb(snapList(s)),err),
+    watchResponses:(eid,cb,err)=>F.onSnapshot(F.collection(db,"events",eid,"responses"),{includeMetadataChanges:true},s=>cb(s.docs.map(d=>({id:d.id,data:d.data(),pending:d.metadata.hasPendingWrites}))),err),
     saveEvent:(eid,data)=>F.setDoc(F.doc(db,"events",eid),data),
     deleteEvent:async eid=>{
       const s=await F.getDocs(F.collection(db,"events",eid,"responses"));
