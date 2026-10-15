@@ -3,7 +3,7 @@
 // Copy the values between the braces and replace the placeholders below.
 // These values are not secret: they only identify your project. Your security rules control who can read and write.
 
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyCGDOFalaYhEE1bfBH-iwC3YOUs1tzeguA",
   authDomain: "times4meeting.firebaseapp.com",
   projectId: "times4meeting",
