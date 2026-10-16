@@ -723,7 +723,7 @@ async function saveNow(){
     if(seq===editSeq){S.dirty=false;st.textContent="Saved"}
     $("deleteResp").hidden=false;updateRemoveLabel();if(S.target!=="me"&&S.target!==id)S.target=id;}
   catch(e){
-    if(e&&e.code==="permission-denied")st.textContent="Saving was refused. Reload the page and try again; if it keeps happening, tell the organizer.";
+    if(e&&e.code==="permission-denied")st.textContent=S.isOwner?(entry.maybe?"Saving was refused. The database rules don't allow \u201cif needed\u201d answers yet: paste the new firestore.rules into Firebase \u2192 Firestore \u2192 Rules and click Publish.":"Saving was refused. Check that your Firestore rules are published, then reload."):"Saving was refused. Reload the page and try again; if it keeps happening, tell the organizer.";
     else st.textContent="Couldn't save ("+(e&&e.code||"error")+"). Your next change will try again.";
     st.classList.add("err")}
   finally{saving=false;if(saveAgain){saveAgain=false;saveNow()}}
