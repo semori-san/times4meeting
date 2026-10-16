@@ -17,7 +17,7 @@ img{max-width:100%}
 /* Layout: a working desk — header strip, two grids side by side (yours | group), planner + export below. Grids are the hero. */
 :root{
   --bg:#EEF1F4; --panel:#FFFFFF; --ink:#18212B; --muted:#5B6672; --line:#D5DBE2; --cell:#F6F8FA;
-  --heat:#0F8A78; --heat-ink:#FFFFFF; --mine:#1F5FBF; --mark:#D9890F; --busy:#C2463B; --soft:#E3E8EE;
+  --heat:#0F8A78; --heat-ink:#FFFFFF; --mine:#1F5FBF; --mark:#D9890F; --hl:#7A3FD1; --maybe:#E2B33C; --busy:#C2463B; --soft:#E3E8EE;
   --f-display:"Familjen Grotesk","Helvetica Neue",Arial,sans-serif;
   --f-body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
@@ -25,10 +25,10 @@ img{max-width:100%}
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#12171D; --panel:#1A2129; --ink:#E6EBF0; --muted:#97A3AF; --line:#2D3742; --cell:#202831;
-  --heat:#2DB89F; --heat-ink:#08221D; --mine:#5B95F0; --mark:#F0A93A; --busy:#E2685C; --soft:#26303A; color-scheme:dark}}
+  --heat:#2DB89F; --heat-ink:#08221D; --mine:#5B95F0; --mark:#F0A93A; --hl:#B48CF5; --maybe:#D8A93A; --busy:#E2685C; --soft:#26303A; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#12171D; --panel:#1A2129; --ink:#E6EBF0; --muted:#97A3AF; --line:#2D3742; --cell:#202831;
-  --heat:#2DB89F; --heat-ink:#08221D; --mine:#5B95F0; --mark:#F0A93A; --busy:#E2685C; --soft:#26303A; color-scheme:dark}
+  --heat:#2DB89F; --heat-ink:#08221D; --mine:#5B95F0; --mark:#F0A93A; --hl:#B48CF5; --maybe:#D8A93A; --busy:#E2685C; --soft:#26303A; color-scheme:dark}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.5}
 .wrap{max-width:1240px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:18px}
 h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:-.01em}
@@ -82,10 +82,18 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--
 .c.hr{border-top:1px solid color-mix(in srgb,var(--muted) 55%,var(--line))}
 .c.half{border-top:1px dotted var(--line)}
 .c.on{background:var(--mine)}
-.c.hl{box-shadow:inset 2px 0 var(--mark),inset -2px 0 var(--mark)}
-.c.hl.ht{box-shadow:inset 2px 0 var(--mark),inset -2px 0 var(--mark),inset 0 2px var(--mark)}
-.c.hl.hb{box-shadow:inset 2px 0 var(--mark),inset -2px 0 var(--mark),inset 0 -2px var(--mark)}
-.c.hl.ht.hb{box-shadow:inset 0 0 0 2px var(--mark)}
+.c.maybe{background:repeating-linear-gradient(135deg,var(--maybe) 0 5px,color-mix(in srgb,var(--maybe) 62%,var(--cell)) 5px 9px)}
+.brush{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.brush .seg button{display:inline-flex;align-items:center;gap:6px;font-size:12.5px}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block;border:1px solid var(--line)}
+.sw.yes{background:var(--mine)}.sw.maybe{background:repeating-linear-gradient(135deg,var(--maybe) 0 3px,color-mix(in srgb,var(--maybe) 62%,var(--cell)) 3px 5px)}
+.sw.heatmaybe{background-color:color-mix(in srgb,var(--heat) 60%,var(--cell));background-image:repeating-linear-gradient(135deg,transparent 0 3px,color-mix(in srgb,var(--maybe) 85%,transparent) 3px 4.5px)}
+.tip .mb{color:color-mix(in srgb,var(--maybe) 70%,var(--ink));font-weight:600}
+.ifn{color:color-mix(in srgb,var(--maybe) 60%,var(--ink));font-weight:600}
+.c.hl{box-shadow:inset 2px 0 var(--hl),inset -2px 0 var(--hl)}
+.c.hl.ht{box-shadow:inset 2px 0 var(--hl),inset -2px 0 var(--hl),inset 0 2px var(--hl)}
+.c.hl.hb{box-shadow:inset 2px 0 var(--hl),inset -2px 0 var(--hl),inset 0 -2px var(--hl)}
+.c.hl.ht.hb{box-shadow:inset 0 0 0 2px var(--hl)}
 .c.sel{box-shadow:inset 0 0 0 2px var(--ink)}
 .legend{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);flex-wrap:wrap}
 .ramp{display:flex;border-radius:4px;overflow:hidden;border:1px solid var(--line)}
@@ -115,6 +123,7 @@ details>summary{cursor:pointer;font-weight:600;font-family:var(--f-display)}
 .win.active{border-color:var(--mark)}
 .plist{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
 .plist li::marker{color:var(--mark)}
+.plist li.subhead{list-style:none;margin:6px 0 0 -20px;font-size:12px;font-weight:600;color:var(--muted)}
 .pitem{border:0;background:none;padding:2px 4px;margin-left:-4px;text-align:left;font-weight:400;font-size:13.5px;border-radius:5px;line-height:1.45}
 .pitem:hover{background:var(--soft)}
 .pitem.active{background:color-mix(in srgb,var(--mark) 16%,transparent)}
@@ -207,6 +216,35 @@ button.dangerfill{background:var(--busy);border-color:var(--busy);color:#fff}
 .s-times select{max-width:230px}
 @media (max-width:420px){.cal{grid-template-columns:28px repeat(7,minmax(30px,1fr))}}
 @media (prefers-reduced-motion:no-preference){.c{transition:background-color .08s}}
+.dropov{position:fixed;inset:0;z-index:60;background:color-mix(in srgb,var(--mine) 18%,transparent);display:flex;align-items:center;justify-content:center;padding:24px;pointer-events:none}
+.dropov div{background:var(--panel);color:var(--ink);border:2px dashed var(--mine);border-radius:12px;padding:20px 24px;font-family:var(--f-display);font-weight:600;font-size:17px;text-align:center;max-width:420px}
+.importmsg{font-size:12.5px;background:color-mix(in srgb,var(--mine) 10%,var(--panel));border:1px solid color-mix(in srgb,var(--mine) 35%,var(--line));border-radius:8px;padding:6px 10px}
+.importmsg.err{background:color-mix(in srgb,var(--busy) 9%,var(--panel));border-color:color-mix(in srgb,var(--busy) 40%,var(--line));color:var(--busy)}
+.dlg .howto summary{font-size:13px}
+.dlg .howto ul{margin:6px 0 0;padding-left:18px;font-size:12.5px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+.dlg .howto b{color:var(--ink)}
+.dlg input[type=url]{font-family:var(--f-mono);font-size:12.5px}
+#linkWrap{display:inline-flex;gap:6px;align-items:center}
+.meets{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.mitem{border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;background:var(--cell)}
+.mitem.focus{border-color:var(--mark);box-shadow:0 0 0 2px color-mix(in srgb,var(--mark) 35%,transparent)}
+.mi-main{display:flex;flex-direction:column;gap:2px;min-width:0}
+.mi-main b{font-family:var(--f-display);font-size:15px}
+.mi-add,.mi-org{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.calbtn{font:inherit;font-weight:600;font-size:12.5px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:4px 11px;text-decoration:none;cursor:pointer}
+.calbtn:hover{border-color:var(--mine);color:var(--mine)}
+.mi-org button{font-size:12.5px;padding:5px 10px}
+.mform{display:flex;flex-direction:column;gap:10px}
+.mform input[type=text],.mform select,.mform textarea,.mform input[type=date]{width:100%}
+.mtimes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mpeople{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.mpeople .chip input{margin:0}
+.dlg{max-height:calc(100vh - 32px);overflow:auto}
+.pill{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px}
+.pill.on{background:color-mix(in srgb,var(--mark) 16%,var(--panel));border-color:color-mix(in srgb,var(--mark) 50%,var(--line));color:var(--ink)}
+.hiddennote{margin:0;font-size:12.5px;background:var(--soft);border-radius:8px;padding:8px 10px;color:var(--ink)}
+.two.solo{grid-template-columns:minmax(0,1fr)}
+.linkish{border:0;background:none;padding:0;color:var(--mine);font-weight:600;font-size:12.5px;text-decoration:underline;cursor:pointer}
 .foot{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;justify-content:center;font-size:12.5px;color:var(--muted);padding-block:6px 0}
 .foot button{font-size:12.5px;padding:4px 10px;font-weight:500}
 .typed-help{font-size:12px;color:var(--muted);margin:0}
@@ -215,6 +253,41 @@ button.dangerfill{background:var(--busy);border-color:var(--busy);color:#fff}
 </head>
 <body>
 
+<div class="dropov" id="dropOv" hidden><div>Drop your calendar file (.ics or Google's .zip) to fill in your availability</div></div>
+<div class="ov" id="linkOv" hidden><div class="dlg" role="dialog" aria-modal="true" aria-labelledby="linkTitle" style="max-width:520px">
+  <h2 id="linkTitle">Fill from your calendar link</h2>
+  <p>Paste the published (ICS) link to your calendar once. After that, one click fills in your availability on any poll.</p>
+  <details class="howto"><summary>How do I get this link?</summary>
+    <ul>
+      <li><b>Outlook</b> (web or new Outlook): Settings → Calendar → Shared calendars → <i>Publish a calendar</i>. Pick your calendar and <b>“Can view when I'm busy”</b>, click Publish, then copy the <b>ICS</b> link.</li>
+      <li><b>Google Calendar</b> (on a computer): Settings → your calendar → <i>Integrate calendar</i> → copy <b>“Secret address in iCal format”</b>.</li>
+      <li><b>Apple iCloud</b>: Calendar app → share the calendar → turn on <i>Public Calendar</i> → copy the link.</li>
+    </ul>
+  </details>
+  <input type="url" id="linkInput" placeholder="https://outlook.office365.com/owa/calendar/…/calendar.ics" autocomplete="off" spellcheck="false" style="width:100%">
+  <label class="small" style="display:flex;gap:8px;align-items:baseline;color:var(--ink)"><input type="checkbox" id="linkRemember" checked> Remember this link on this device</label>
+  <div class="privacy" role="note"><b>Privacy</b><ul>
+    <li>Your link goes to the organizer's relay, which fetches your calendar, <b>removes titles, descriptions, locations and attendees</b>, and sends only the busy times back to your browser. The relay stores nothing.</li>
+    <li>The link is kept only in this browser (if you tick Remember). It's never saved with your poll response.</li>
+    <li>Anyone who has the link can view your calendar until you unpublish or reset it, so treat it like a password. In Outlook, “Can view when I'm busy” makes the link reveal busy times only.</li>
+  </ul></div>
+  <div class="status" id="linkStatus"></div>
+  <div class="row" style="justify-content:flex-end"><button type="button" id="linkForget" class="danger" hidden>Forget saved link</button><button type="button" id="linkCancel">Cancel</button><button type="button" id="linkGo" class="primary">Fill in my times</button></div>
+</div></div>
+<div class="ov" id="meetOv" hidden><div class="dlg" role="dialog" aria-modal="true" aria-labelledby="meetHead" style="max-width:520px">
+  <h2 id="meetHead">Schedule a meeting</h2>
+  <div class="mform">
+    <label class="f">Title<input type="text" id="mTitle" maxlength="120"></label>
+    <label class="f">Day<select id="mDate"></select></label>
+    <div class="mtimes"><label class="f">Starts<select id="mStart"></select></label><label class="f">Ends<select id="mEnd"></select></label></div>
+    <div id="mWeeklyRow" class="mtimes" hidden><label class="f">First date<input type="date" id="mFirst"></label><label class="f" style="flex-direction:row;align-items:center;gap:8px;color:var(--ink);align-self:end;padding-bottom:8px"><input type="checkbox" id="mRepeat" checked> Repeats every week</label></div>
+    <label class="f">Where (room, address or video link)<input type="text" id="mLoc" maxlength="300" placeholder="Room 204, or https://zoom.us/j/…"></label>
+    <label class="f">Notes (optional)<textarea id="mNotes" maxlength="1000" style="min-height:56px"></textarea></label>
+    <div class="f">Who's invited (listed in the invite)<div class="mpeople" id="mPeople"></div></div>
+  </div>
+  <div class="status" id="mStatus"></div>
+  <div class="row" style="justify-content:flex-end"><button type="button" id="mCancel">Cancel</button><button type="button" class="primary" id="mSave">Add meeting</button></div>
+</div></div>
 <div class="ov" id="confirmOv" hidden><div class="dlg" role="alertdialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmBody"><h2 id="confirmTitle"></h2><p id="confirmBody"></p><div class="row" style="justify-content:flex-end"><button type="button" id="confirmCancel">Cancel</button><button type="button" id="confirmOk" class="dangerfill"></button></div></div></div>
 <div class="wrap" id="app">
   <div class="brand" id="brandRow"><span class="brand-mark" aria-hidden="true"></span><span>Times<b>4</b>Meeting</span></div>
@@ -255,6 +328,8 @@ button.dangerfill{background:var(--busy);border-color:var(--busy);color:#fff}
           <label for="sStart">From</label><select id="sStart"></select>
           <label for="sEnd">To</label><select id="sEnd"></select>
           <label for="sTz">Zone</label><select id="sTz"></select>
+          <label for="sIfNeeded" title="Lets respondents mark times as 'if needed' (yellow). These count as half.">If needed</label><label style="display:flex;gap:6px;align-items:center;color:var(--ink);font-weight:400"><input type="checkbox" id="sIfNeeded"> Allow “if needed” answers <span class="muted">(count ½)</span></label>
+          <label for="sHideGroup">Results</label><label style="display:flex;gap:6px;align-items:center;color:var(--ink);font-weight:400"><input type="checkbox" id="sHideGroup"> Hide group availability from respondents</label>
           <label for="sStep">Slots</label><select id="sStep"><option value="10">10 min</option><option value="15" selected>15 min</option><option value="30">30 min</option><option value="60">60 min</option></select>
         </div>
       </div>
@@ -268,6 +343,11 @@ button.dangerfill{background:var(--busy);border-color:var(--busy);color:#fff}
 
   <!-- Main -->
   <div id="main" hidden style="display:flex;flex-direction:column;gap:16px">
+    <section class="panel compact" id="meetPanel" hidden>
+      <div class="panel-head"><h2 id="meetTitle">Scheduled meeting</h2><div class="row" id="meetOrgTools" hidden><button type="button" id="meetCopyAll">Copy all for email</button><button type="button" id="meetIcsAll">Download .ics</button><button type="button" id="meetAdd">+ Add meeting</button></div></div>
+      <ul class="meets" id="meetList"></ul>
+      <pre class="code" id="meetFallback" hidden></pre>
+    </section>
     <div class="two">
       <section class="panel compact" id="minePanel">
         <div class="panel-head">
@@ -277,16 +357,21 @@ button.dangerfill{background:var(--busy);border-color:var(--busy);color:#fff}
         <div class="ctl">
           <select id="whoSel" aria-label="Filling in for" hidden></select>
           <input type="text" id="myName" placeholder="Your name" aria-label="Your name">
+          <span id="linkWrap" hidden><button type="button" id="linkBtn">Use calendar link…</button><button type="button" class="linkish" id="linkEdit" hidden>link settings</button></span>
+          <button type="button" id="quickIcs" title="Fill in from a calendar file (.ics, or Google's .zip export) from Outlook, Google or Apple Calendar">Fill from calendar file</button><input type="file" id="quickFile" accept=".ics,.zip,text/calendar,application/zip" hidden>
           <button type="button" id="clearMine">Clear all times</button>
           <button type="button" id="undoBtn" disabled title="Undo last change (Ctrl/Cmd+Z)">↶ Undo</button>
         </div>
+        <div class="brush" id="brushRow" hidden><span>Mark as:</span><span class="seg" role="radiogroup"><button type="button" id="brushYes" role="radio" aria-selected="true"><span class="sw yes"></span>Available</button><button type="button" id="brushMaybe" role="radio" aria-selected="false"><span class="sw maybe"></span>If needed</button></span><span>“If needed” counts as half.</span></div>
         <div class="editbar" id="editBar" hidden>
           <button type="button" id="editToggle" class="primary">Edit my times</button>
           <span class="small muted" id="editHint"></span>
         </div>
         <span id="whoRow" hidden></span>
+        <div class="importmsg" id="importMsg" role="status" hidden><span id="importText"></span> <button type="button" class="linkish" id="importReview">Review</button></div>
         <div class="gridbox"><div class="grid paint" id="paintGrid"></div></div>
-        <p class="privacy-line">Your name and marked times are saved in the organizer's database (Google Firebase) and are visible to anyone with this event's link. Drag again over blue slots to remove them.</p>
+        <p class="privacy-line" id="privLine">Your name and marked times are saved in the organizer's database (Google Firebase) and are visible to anyone with this event's link. Drag again over blue slots to remove them.</p>
+        <p class="hiddennote" id="hiddenNote" hidden>The organizer has hidden the group results for this poll, so you won't see other people's answers.</p>
         <div class="row" id="delRow">
           <button type="button" id="deleteResp" class="danger" hidden>Remove me from this event</button>
         </div>
@@ -296,25 +381,23 @@ button.dangerfill{background:var(--busy);border-color:var(--busy);color:#fff}
             <div class="privacy" role="note">
               <b>Privacy</b>
               <ul>
-                <li><b>Calendar files (.ics) and typed text</b> are read only in your browser. Nothing in them is uploaded.</li>
+                <li><b>Calendar files (.ics) and typed text</b> are read only in your browser. Nothing in them is uploaded. Tip: you can also drop an .ics file anywhere on this page.</li>
+                <li><b>Calendar links</b> (optional "Use calendar link") pass through the organizer's relay, which strips event details and stores nothing. The link stays only in your browser.</li>
                 <li>Event names found in your calendar stay on your screen. Only your name and the time slots you mark are saved.</li>
               </ul>
             </div>
             <div class="drop" id="drop">
-              <span class="small">Drop or choose a calendar file (<span class="mono">.ics</span>) exported from Outlook, Google Calendar or Apple Calendar, and/or type your commitments below.</span>
-              <div class="row"><input type="file" id="calFile" accept=".ics,.txt,text/calendar,text/plain"></div>
+              <span class="small">Drop or choose a calendar file (<span class="mono">.ics</span>, or the <span class="mono">.zip</span> Google Calendar exports) from Outlook, Google Calendar or Apple Calendar, and/or type your commitments below.</span>
+              <div class="row"><input type="file" id="calFile" accept=".ics,.zip,.txt,text/calendar,application/zip,text/plain"></div>
               <textarea id="calText" placeholder="One commitment per line, e.g.&#10;Tue &amp; Thu 2-3:30pm seminar&#10;Mon 9-11am teaching&#10;Wed after 4&#10;Oct 21 1-2pm dentist&#10;Fri all day"></textarea>
               <p class="typed-help">Understands weekdays (<code>Mon</code>, <code>Tue &amp; Thu</code>, <code>Mon-Fri</code>, <code>weekdays</code>), dates (<code>Oct 21</code>, <code>10/21</code>) and times (<code>2-3:30pm</code>, <code>14:00-15:30</code>, <code>after 4</code>, <code>before 10</code>, <code>morning</code>, <code>all day</code>). A line with times but no day applies to every day. Check the list it finds before applying.</p>
-              <div class="row"><button type="button" id="readCal">Find my busy times</button><span class="status" id="calStatus"></span></div>
+              <div class="row"><button type="button" id="readCal">Apply typed commitments</button><span class="status" id="calStatus"></span></div>
             </div>
             <div id="busyOut" hidden style="display:flex;flex-direction:column;gap:8px">
               <h3>Busy times found <span class="muted small" id="busyCount"></span></h3>
               <div class="busylist" id="busyList"></div>
-              <div class="row">
-                <button class="primary" type="button" id="applyAll">Mark me free except these</button>
-                <button type="button" id="applyRemove">Only remove these from my selection</button>
-              </div>
-              <p class="muted small" style="margin:0">Your grid above updates and saves automatically. You can still adjust it by dragging.</p>
+              <label class="small" style="display:flex;gap:8px;align-items:baseline"><input type="checkbox" id="keepMarks"> Keep the times I'd already marked; only remove these busy times</label>
+              <p class="muted small" style="margin:0">Ticked items are blocked out of your grid. Untick any you could skip; your grid updates and saves right away. Undo puts back what you had before.</p>
             </div>
           </div>
         </details>
@@ -323,18 +406,18 @@ button.dangerfill{background:var(--busy);border-color:var(--busy);color:#fff}
       <section class="panel compact" id="groupPanel">
         <div class="panel-head">
           <h2>Group availability</h2>
-          <span class="muted small" id="respCount"></span>
+          <span class="row" style="gap:8px"><span class="muted small" id="respCount"></span><button type="button" id="hideToggle" class="pill" hidden></button></span>
         </div>
         <div class="chiprow"><div class="chips" id="chips"></div><span class="allnone"><button type="button" id="allOn">All</button><button type="button" id="allOff">None</button></span></div>
         <div class="gridbox"><div class="grid" id="heatGrid"></div></div>
-        <div class="legend"><span id="legendLo">0/0</span><div class="ramp" id="ramp"></div><span id="legendHi">0/0</span><span>available · hover or tap a slot to see who</span></div>
+        <div class="legend"><span id="legendLo">0/0</span><div class="ramp" id="ramp"></div><span id="legendHi">0/0</span><span>available · hover or tap a slot to see who</span><span id="legendMaybe" hidden><span class="sw heatmaybe"></span> includes “if needed” (counts ½)</span></div>
         <div class="tip" id="detail" hidden></div>
         <div class="row" id="demoRow" hidden><button type="button" id="demoBtn">Preview with example responses</button><span class="muted small">Not saved; for trying the planner before anyone responds.</span></div>
       </section>
     </div>
 
     <section class="panel" id="planPanel">
-      <div class="panel-head"><h2>Times that work</h2><span class="muted small">For the people selected in Group availability</span></div>
+      <div class="panel-head"><h2>Times that work</h2><span class="row"><span class="muted small">For the people selected in Group availability</span><button type="button" class="primary" id="schedBtn" hidden>Schedule a meeting</button></span></div>
       <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
         <div class="row">
           <p class="small" id="winHead" style="margin:0;flex:1"></p>
@@ -364,7 +447,7 @@ button.dangerfill{background:var(--busy);border-color:var(--busy);color:#fff}
 "use strict";
 const $=id=>document.getElementById(id);
 const S={backend:null,respDocs:new Map(),counts:new Map(),unsubs:[],eventsLoaded:false,evLoaded:false,respLoaded:false,hlSource:"windows",winList:[],eid:null,events:new Map(),allDocs:new Map(),config:null,responses:new Map(),myId:null,isOwner:false,db:null,user:null,sample:null,downloads:null,
-  canWrite:true,target:"me",draft:new Set(),draftName:"",dirty:false,filter:null,highlight:new Set(),demo:false,
+  canWrite:true,target:"me",draft:new Set(),draftMaybe:new Set(),draftName:"",dirty:false,filter:null,highlight:new Set(),demo:false,
   busy:[],activeWin:null,activeMeet:null,editingSetup:false,dbReady:false};
 const browserTz=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"UTC"}catch(e){return "UTC"}})();
 
@@ -410,10 +493,14 @@ const rangeText=rs=>rs.map(r=>hhmm(r[0])+"-"+hhmm(r[1])).join(", ");
 /* ---------- people ---------- */
 function people(){ // array {id,name,slots:Set,isMe}
   const arr=[];
-  for(const [id,r] of S.responses){arr.push({id,name:String(r.name||"Unnamed"),slots:new Set(Array.isArray(r.slots)?r.slots:[]),isMe:id===S.myId,example:!!r.example})}
+  const mo=maybeOn();
+  for(const [id,r] of S.responses){arr.push({id,name:String(r.name||"Unnamed"),slots:new Set(Array.isArray(r.slots)?r.slots:[]),maybe:new Set(mo&&Array.isArray(r.maybe)?r.maybe:[]),isMe:id===S.myId,example:!!r.example})}
   arr.sort((a,b)=>a.name.localeCompare(b.name));
   return arr;
 }
+function maybeOn(){return!!(S.config&&S.config.ifNeeded)}
+function scoreAt(p,k){return p.slots.has(k)?1:(p.maybe&&p.maybe.has(k)?0.5:0)}
+const fmtScore=n=>(Math.round(n*2)/2).toString().replace(/\.5$/,"½").replace(/^0½$/,"½");
 function selectedPeople(){const ps=people();if(!S.filter)return ps;return ps.filter(p=>S.filter.has(p.id))}
 
 /* ---------- setup ---------- */
@@ -463,7 +550,7 @@ function fillTz(sel,cur){
 function showSetup(editing){
   const c=S.config;
   fillTimeSelect($("sStart"),c?c.startMin:540);fillTimeSelect($("sEnd"),c?c.endMin:1020);
-  fillTz($("sTz"),c?c.tz:browserTz);$("sStep").value=String(c?c.step:15);
+  fillTz($("sTz"),c?c.tz:browserTz);$("sStep").value=String(c?c.step:15);$("sIfNeeded").checked=!!(c&&c.ifNeeded);$("sHideGroup").checked=!!(c&&c.hideGroup);
   $("sTitle").value=c?c.title:"";
   const wkMode=!!(c&&c.mode==="weekdays");
   SET.dates=new Set(c&&!wkMode?c.dates:[]);SET.week=new Set(wkMode?c.dates:[refDate(1),refDate(2),refDate(3),refDate(4),refDate(5)]);
@@ -481,8 +568,8 @@ $("saveSetup").onclick=async()=>{
   if(!dates.length){st.textContent=mode==="weekdays"?"Pick at least one day.":"Pick at least one date.";st.classList.add("err");return}
   if(dates.length>31){st.textContent="Pick 31 dates or fewer.";st.classList.add("err");return}
   if(endMin<=startMin){st.textContent="End time must be after start time.";st.classList.add("err");return}
-  const cfg={title:$("sTitle").value.trim()||"New event",mode,dates,startMin,endMin,step,tz,note:editing&&S.config?S.config.note||"":"",updatedAt:new Date().toISOString()};
-  const eid=editing?S.eid:newEid();if(!editing)cfg.createdAt=cfg.updatedAt;
+  const cfg={title:$("sTitle").value.trim()||"New event",mode,dates,startMin,endMin,step,tz,ifNeeded:$("sIfNeeded").checked,hideGroup:$("sHideGroup").checked,note:editing&&S.config?S.config.note||"":"",updatedAt:new Date().toISOString()};
+  const eid=editing?S.eid:newEid();if(!editing)cfg.createdAt=cfg.updatedAt;else{if(S.config.createdAt)cfg.createdAt=S.config.createdAt;if(S.config.meetings&&S.config.meetings.length)cfg.meetings=S.config.meetings}
   if(!S.backend||!S.isOwner){st.textContent="Only the organizer can create events. Sign in at the bottom of the page.";st.classList.add("err");return}
   st.textContent="Saving…";$("saveSetup").disabled=true;
   try{await S.backend.saveEvent(eid,cfg);S.events.set(eid,cfg);st.textContent="";$("setup").hidden=true;if(!editing)go(eid);else refreshAll(false)}
@@ -514,23 +601,25 @@ function buildGrid(el,mode){
   }
   el.innerHTML="";el.appendChild(frag);
 }
-function paintMine(){for(const cell of $("paintGrid").querySelectorAll(".c"))cell.classList.toggle("on",S.draft.has(cell.dataset.k))}
+function paintMine(){for(const cell of $("paintGrid").querySelectorAll(".c")){const k=cell.dataset.k;cell.classList.toggle("on",S.draft.has(k));cell.classList.toggle("maybe",S.draftMaybe.has(k))}}
 function heatColor(n,total){if(!n||!total)return"";const a=0.12+0.88*(n/total);return"color-mix(in srgb,var(--heat) "+Math.round(a*100)+"%,var(--cell))"}
 function paintHeat(){
-  const sel=selectedPeople(),total=sel.length,counts=new Map();
-  for(const p of sel)for(const k of p.slots)counts.set(k,(counts.get(k)||0)+1);
+  const sel=selectedPeople(),total=sel.length,counts=new Map(),mb=new Set();
+  for(const p of sel){for(const k of p.slots)counts.set(k,(counts.get(k)||0)+1);for(const k of p.maybe)if(!p.slots.has(k)){counts.set(k,(counts.get(k)||0)+0.5);mb.add(k)}}
   const step=S.config.step,nb=(k,dm)=>{const [d,t]=k.split("T");return key(d,toMin(t)+dm)};
-  for(const cell of $("heatGrid").querySelectorAll(".c")){const k=cell.dataset.k,n=counts.get(k)||0,h=S.highlight.has(k);cell.style.background=heatColor(n,total);cell.classList.toggle("hl",h);cell.classList.toggle("ht",h&&!S.highlight.has(nb(k,-step)));cell.classList.toggle("hb",h&&!S.highlight.has(nb(k,step)))}
-  $("legendLo").textContent="0/"+total;$("legendHi").textContent=total+"/"+total;
+  for(const cell of $("heatGrid").querySelectorAll(".c")){const k=cell.dataset.k,n=counts.get(k)||0,h=S.highlight.has(k);cell.style.background=heatColor(n,total);cell.style.backgroundImage=mb.has(k)?"repeating-linear-gradient(135deg,transparent 0 6px,color-mix(in srgb,var(--maybe) 75%,transparent) 6px 7.5px)":"";cell.classList.toggle("hl",h);cell.classList.toggle("ht",h&&!S.highlight.has(nb(k,-step)));cell.classList.toggle("hb",h&&!S.highlight.has(nb(k,step)))}
+  $("legendLo").textContent="0/"+total;$("legendHi").textContent=total+"/"+total;$("legendMaybe").hidden=!maybeOn();
   const r=$("ramp");r.innerHTML="";const steps=Math.max(1,Math.min(total,6));for(let i=0;i<=steps;i++){const s=document.createElement("span");s.style.background=i?heatColor(i,steps):"var(--cell)";r.appendChild(s)}
 }
 let selCell=null;
 function showDetail(k){
   if(!k)return;const sel=selectedPeople();const [d,t]=k.split("T");
-  const yes=sel.filter(p=>p.slots.has(k)),no=sel.filter(p=>!p.slots.has(k));
+  const yes=sel.filter(p=>p.slots.has(k)),mby=sel.filter(p=>!p.slots.has(k)&&p.maybe.has(k)),no=sel.filter(p=>!p.slots.has(k)&&!p.maybe.has(k));
+  const score=yes.length+mby.length/2;
   const box=$("detail");box.innerHTML="";box.hidden=false;
-  const h=document.createElement("div");h.className="mono";h.style.fontWeight="500";h.textContent=dLabel(d)+" · "+fmt12(toMin(t))+"–"+fmt12(toMin(t)+S.config.step)+" · "+yes.length+"/"+sel.length+" available";box.appendChild(h);
+  const h=document.createElement("div");h.className="mono";h.style.fontWeight="500";h.textContent=dLabel(d)+" · "+fmt12(toMin(t))+"–"+fmt12(toMin(t)+S.config.step)+" · "+fmtScore(score)+"/"+sel.length+" available";box.appendChild(h);
   const a=document.createElement("div");a.innerHTML='<span class="ok">Available: </span>';a.appendChild(document.createTextNode(yes.map(p=>p.name).join(", ")||"nobody"));box.appendChild(a);
+  if(mby.length){const m=document.createElement("div");m.innerHTML='<span class="mb">If needed: </span>';m.appendChild(document.createTextNode(mby.map(p=>p.name).join(", ")));box.appendChild(m)}
   if(no.length){const b=document.createElement("div");b.className="no";b.textContent="Not available: "+no.map(p=>p.name).join(", ");box.appendChild(b)}
   const cell=$("heatGrid").querySelector('.c[data-k="'+k+'"]');if(!cell)return;
   const pr=$("groupPanel").getBoundingClientRect(),cr=cell.getBoundingClientRect(),bw=box.offsetWidth,bh=box.offsetHeight;
@@ -556,9 +645,9 @@ function renderEditMode(){
 $("editToggle").onclick=()=>{editing=!editing;renderEditMode()};
 $("paintGrid").addEventListener("click",()=>{if(isLocked()){const t=$("editToggle");t.classList.remove("nudge");void t.offsetWidth;t.classList.add("nudge")}});
 const undoStack=[];
-function pushUndo(){undoStack.push([...S.draft]);if(undoStack.length>40)undoStack.shift();updateUndo()}
+function pushUndo(){undoStack.push([[...S.draft],[...S.draftMaybe]]);if(undoStack.length>40)undoStack.shift();updateUndo()}
 function updateUndo(){$("undoBtn").disabled=!undoStack.length}
-function undo(){if(!undoStack.length)return;S.draft=new Set(undoStack.pop());updateUndo();paintMine();markDirty()}
+function undo(){if(!undoStack.length)return;const [y,m]=undoStack.pop();S.draft=new Set(y);S.draftMaybe=new Set(m);updateUndo();paintMine();markDirty()}
 $("undoBtn").onclick=undo;
 document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&e.key.toLowerCase()==="z"&&!/^(INPUT|TEXTAREA|SELECT)$/.test((e.target&&e.target.tagName)||"")&&!$("main").hidden){e.preventDefault();undo()}});
 if(touchFirst)$("editBar").insertBefore($("undoBtn"),$("editHint"));
@@ -567,27 +656,39 @@ renderEditMode();
 /* painting */
 let painting=null;
 function cellAt(x,y){const el=document.elementFromPoint(x,y);return el&&el.closest&&el.closest("#paintGrid .c")}
-function applyCell(c){if(!c)return;const k=c.dataset.k;if(painting.on)S.draft.add(k);else S.draft.delete(k);c.classList.toggle("on",painting.on)}
-$("paintGrid").addEventListener("pointerdown",e=>{const c=e.target.closest(".c");if(!c)return;if(isLocked())return;e.preventDefault();pushUndo();painting={on:!S.draft.has(c.dataset.k)};applyCell(c);try{$("paintGrid").setPointerCapture(e.pointerId)}catch(_){}});
+function cellPos(c){const [d,t]=c.dataset.k.split("T");return[S.config.dates.indexOf(d),times().indexOf(toMin(t))]}
+/* dragging fills the whole rectangle between the first cell and the current one, so fast drags never skip slots */
+function applyCell(c){
+  if(!c||!painting)return;const [d2,t2]=cellPos(c);if(d2<0||t2<0)return;
+  if(painting.last&&painting.last[0]===d2&&painting.last[1]===t2)return;painting.last=[d2,t2];
+  const [d1,t1]=painting.a,ds=S.config.dates,ts=times();
+  const yes=new Set(painting.base),mb=new Set(painting.baseMaybe);
+  for(let d=Math.min(d1,d2);d<=Math.max(d1,d2);d++)for(let t=Math.min(t1,t2);t<=Math.max(t1,t2);t++){const k=key(ds[d],ts[t]);yes.delete(k);mb.delete(k);if(painting.mode==="yes")yes.add(k);else if(painting.mode==="maybe")mb.add(k)}
+  S.draft=yes;S.draftMaybe=mb;paintMine();
+}
+let brush="yes";
+function renderBrush(){const on=maybeOn();$("brushRow").hidden=!on;if(!on)brush="yes";$("brushYes").setAttribute("aria-selected",brush==="yes");$("brushMaybe").setAttribute("aria-selected",brush==="maybe")}
+$("brushYes").onclick=()=>{brush="yes";renderBrush()};$("brushMaybe").onclick=()=>{brush="maybe";renderBrush()};
+$("paintGrid").addEventListener("pointerdown",e=>{const c=e.target.closest(".c");if(!c)return;if(isLocked())return;e.preventDefault();pushUndo();const k0=c.dataset.k,cur=S.draft.has(k0)?"yes":S.draftMaybe.has(k0)?"maybe":"none";painting={mode:cur===brush?"erase":brush,a:cellPos(c),base:new Set(S.draft),baseMaybe:new Set(S.draftMaybe),last:null};applyCell(c);try{$("paintGrid").setPointerCapture(e.pointerId)}catch(_){}});
 $("paintGrid").addEventListener("pointermove",e=>{if(!painting)return;applyCell(cellAt(e.clientX,e.clientY))});
 const endPaint=()=>{if(!painting)return;painting=null;markDirty()};
 $("paintGrid").addEventListener("pointerup",endPaint);$("paintGrid").addEventListener("pointercancel",endPaint);
 function markDirty(){S.dirty=true;editSeq++;const st=$("saveStatus");if(($("myName").value||"").trim()){st.classList.remove("err");st.textContent="Saving…"}else{st.classList.add("err");st.textContent="Type your name to save"}mergeResponses();if(S.config)refreshGroup();scheduleSave()}
 $("clearMine").onclick=async()=>{
-  if(!S.draft.size)return;
+  if(!S.draft.size&&!S.draftMaybe.size)return;
   const other=S.target!=="me",nm=(($("myName").value||"").trim())||"this person";
   const ok=await askConfirm({title:other?"Clear all of "+nm+"'s times?":"Clear all your times?",
     body:(other?"Every slot marked for "+nm:"Every slot you've marked")+" for this event will be erased. "+(other?"Their":"Your")+" name stays on the list.",
     ok:"Clear all times"});
-  if(!ok)return;pushUndo();S.draft.clear();paintMine();markDirty()};
+  if(!ok)return;pushUndo();S.draft.clear();S.draftMaybe.clear();paintMine();markDirty()};
 $("myName").addEventListener("input",()=>{S.draftName=$("myName").value;try{if(S.target==="me")localStorage.setItem("t4m.name",S.draftName)}catch(e){}markDirty();updateRemoveLabel()});
 
 /* ---------- who am I editing ---------- */
 function targetId(){return S.target==="me"?S.myId:S.target}
 function loadTarget(){
-  undoStack.length=0;updateUndo();
+  undoStack.length=0;updateUndo();importBase=null;S.busy=[];if($("busyOut")){$("busyOut").hidden=true;$("importMsg").hidden=true}
   const id=targetId();const r=id&&S.responses.get(id);
-  S.draft=new Set(r&&Array.isArray(r.slots)?r.slots:[]);
+  S.draft=new Set(r&&Array.isArray(r.slots)?r.slots:[]);S.draftMaybe=new Set(r&&Array.isArray(r.maybe)?r.maybe:[]);
   if(r)S.draftName=r.name||"";else if(S.target!=="me")S.draftName="";
   $("myName").value=S.draftName||"";S.dirty=false;$("saveStatus").textContent=r?"Saved":"Drag over the times you're free. Changes save automatically.";
   $("mineHeading").textContent=S.target==="me"?"Your availability":"Availability for "+(S.draftName||"someone else");
@@ -617,7 +718,8 @@ async function saveNow(){
   const id=targetId();
   if(!S.backend||!id){st.textContent="Can't save: the page isn't connected. Reload and try again.";st.classList.add("err");return}
   saving=true;st.textContent="Saving…";const seq=editSeq;
-  try{await writeEntry(id,{name,slots:[...S.draft].sort(),updatedAt:new Date().toISOString(),source:S.target==="me"?"self":"organizer"});
+  const entry={name,slots:[...S.draft].sort(),updatedAt:new Date().toISOString(),source:S.target==="me"?"self":"organizer"};if(maybeOn()&&S.draftMaybe.size)entry.maybe=[...S.draftMaybe].sort();
+  try{await writeEntry(id,{...entry,updatedAt:new Date().toISOString(),source:S.target==="me"?"self":"organizer"});
     if(seq===editSeq){S.dirty=false;st.textContent="Saved"}
     $("deleteResp").hidden=false;updateRemoveLabel();if(S.target!=="me"&&S.target!==id)S.target=id;}
   catch(e){
@@ -661,43 +763,62 @@ $("allOn").onclick=()=>{S.filter=null;S.hlSource="windows";S.activeWin=null;refr
 $("allOff").onclick=()=>{S.filter=new Set();S.hlSource="windows";S.activeWin=null;refreshGroup()};
 
 /* ---------- best windows ---------- */
+function dayRuns(okFn,minLen){
+  const t=times(),step=S.config.step,out=[];
+  for(const d of S.config.dates){let st=-1;
+    for(let i=0;i<=t.length;i++){const on=i<t.length&&okFn(key(d,t[i]));
+      if(on&&st<0)st=i;
+      if(!on&&st>=0){if(i-st>=minLen){const ks=[];for(let j=st;j<i;j++)ks.push(key(d,t[j]));out.push({d,i:st,start:t[st],end:t[i-1]+step,ks})}st=-1}}}
+  return out;
+}
 function bestWindows(){
   const sel=selectedPeople(),box=$("windows");box.innerHTML="";S.winList=[];
   const head=$("winHead");
   if(!sel.length){head.textContent="Select people on the calendar above.";if(S.hlSource==="windows")S.highlight=new Set();return}
-  const step=S.config.step,len=Math.max(1,Math.ceil(+$("durSel").value/step)),t=times();
-  const ok=k=>sel.every(p=>p.slots.has(k));
-  // continuous windows where everyone selected is free
-  let full=[];
-  for(const d of S.config.dates){let st=-1;
-    for(let i=0;i<=t.length;i++){const on=i<t.length&&ok(key(d,t[i]));
-      if(on&&st<0)st=i;
-      if(!on&&st>=0){if(i-st>=len){const ks=[];for(let j=st;j<i;j++)ks.push(key(d,t[j]));full.push({d,i:st,start:t[st],end:t[i-1]+step,ks,avail:sel,miss:[]})}st=-1}}}
-  let list=full,partial=false,shorter=false;
-  if(!full.length&&len>1){for(const d of S.config.dates){let st=-1;
-    for(let i=0;i<=t.length;i++){const on=i<t.length&&ok(key(d,t[i]));if(on&&st<0)st=i;
-      if(!on&&st>=0){const ks=[];for(let j=st;j<i;j++)ks.push(key(d,t[j]));full.push({d,i:st,start:t[st],end:t[i-1]+step,ks,avail:sel,miss:[]});st=-1}}}
-    if(full.length){list=full;shorter=true}}
-  if(!full.length){partial=true;const cands=[];
+  const step=S.config.step,len=Math.max(1,Math.ceil(+$("durSel").value/step)),t=times(),mo=maybeOn();
+  const allYes=k=>sel.every(p=>p.slots.has(k)),allCan=k=>sel.every(p=>scoreAt(p,k)>0);
+  // 1) everyone fully available
+  let full=dayRuns(allYes,len).map(c=>({...c,avail:sel,miss:[],ifn:[]})),shorter=false;
+  // 2) everyone can make it, counting "if needed" (only windows that actually rely on someone's "if needed")
+  let ifn=[];
+  if(mo){ifn=dayRuns(allCan,len).filter(c=>c.ks.some(k=>!allYes(k)))
+      .map(c=>({...c,avail:sel,miss:[],ifn:sel.filter(p=>c.ks.some(k=>!p.slots.has(k)))}))
+      .sort((a,b)=>a.ifn.length-b.ifn.length||(a.d<b.d?-1:a.d>b.d?1:a.i-b.i)).slice(0,8)}
+  if(!full.length&&!ifn.length&&len>1){full=dayRuns(allYes,1).map(c=>({...c,avail:sel,miss:[],ifn:[]}));shorter=full.length>0}
+  let list=full.concat(ifn),partial=false;
+  // 3) no time works for everyone: best partial options, scored 1 / ½ / 0
+  if(!list.length){partial=true;const cands=[];
     for(const d of S.config.dates)for(let i=0;i+len<=t.length;i++){const ks=[];for(let j=0;j<len;j++)ks.push(key(d,t[i+j]));
-      const avail=sel.filter(p=>ks.every(k=>p.slots.has(k)));if(avail.length)cands.push({d,i,start:t[i],end:t[i]+len*step,ks,avail,miss:sel.filter(p=>!avail.includes(p))})}
-    cands.sort((a,b)=>b.avail.length-a.avail.length||(a.d<b.d?-1:a.d>b.d?1:a.i-b.i));
+      const sc=p=>Math.min(...ks.map(k=>scoreAt(p,k)));const total=sel.reduce((a,p)=>a+sc(p),0);
+      if(total>0)cands.push({d,i,start:t[i],end:t[i]+len*step,ks,total,avail:sel.filter(p=>sc(p)>0),ifn:sel.filter(p=>sc(p)===0.5),miss:sel.filter(p=>sc(p)===0)})}
+    cands.sort((a,b)=>b.total-a.total||(a.d<b.d?-1:a.d>b.d?1:a.i-b.i));
     list=[];for(const c of cands){if(list.length>=6)break;if(list.some(p=>p.d===c.d&&c.i<p.i+len&&p.i<c.i+len))continue;list.push(c)}
     list.sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:a.i-b.i);}
   S.winList=list;
   const who=sel.length===1?sel[0].name:(sel.length<=4?sel.map(p=>p.name).join(", "):sel.length+" people");
+  const minTxt=({30:"30-minute",60:"1-hour",90:"1.5-hour",120:"2-hour"}[+$("durSel").value]||"");
   if(!list.length)head.textContent="No one selected is free for that long.";
-  else if(partial)head.textContent="No time works for all of "+who+". Closest options:";
-  else if(shorter)head.textContent="No "+({30:"30-minute",60:"1-hour",90:"1.5-hour",120:"2-hour"}[+$("durSel").value]||"")+" window works for all of "+who+". Shorter times when "+(sel.length===1?"they are":"all are")+" free:";
-  else head.textContent=list.length+(list.length===1?" time":" times")+" when "+who+(sel.length===1?" is":" are all")+" free:";
-  if(S.hlSource==="windows"){if(S.activeWin!=null&&list[S.activeWin])S.highlight=new Set(list[S.activeWin].ks);else{S.activeWin=null;S.highlight=new Set(partial?[]:list.flatMap(c=>c.ks))}}
-  list.forEach((c,idx)=>{const li=document.createElement("li");const b=document.createElement("button");b.type="button";
+  else if(partial)head.textContent="No time works for all of "+who+". Closest options"+(mo?" (if needed counts ½)":"")+":";
+  else if(shorter)head.textContent="No "+minTxt+" window works for all of "+who+". Shorter times when "+(sel.length===1?"they are":"all are")+" free:";
+  else if(!full.length)head.textContent="No time when "+who+(sel.length===1?" is":" are all")+" fully free, but these work if needed:";
+  else head.textContent=full.length+(full.length===1?" time":" times")+" when "+who+(sel.length===1?" is":" are all")+" free:";
+  if(S.hlSource==="windows"){if(S.activeWin!=null&&list[S.activeWin])S.highlight=new Set(list[S.activeWin].ks);else{S.activeWin=null;S.highlight=new Set(partial?[]:(full.length?full:list).flatMap(c=>c.ks))}}
+  list.forEach((c,idx)=>{
+    if(!partial&&full.length&&idx===full.length){const sub=document.createElement("li");sub.className="subhead";sub.textContent="Also possible if needed:";box.appendChild(sub)}
+    const li=document.createElement("li");const b=document.createElement("button");b.type="button";
     b.className="pitem"+(S.hlSource==="windows"&&S.activeWin===idx?" active":"");
     b.innerHTML='<span class="when"></span> <span class="who"></span>';
     b.children[0].textContent=dLabel(c.d)+", "+fmt12(c.start)+"–"+fmt12(c.end);
-    b.children[1].textContent=partial?"— "+c.avail.length+"/"+sel.length+", missing "+c.miss.map(p=>p.name).join(", "):"("+((c.end-c.start)>=60?((c.end-c.start)/60)+" h":(c.end-c.start)+" min")+")";
+    const dur="("+((c.end-c.start)>=60?((c.end-c.start)/60)+" h":(c.end-c.start)+" min")+")";
+    if(partial){b.children[1].textContent="— "+fmtScore(c.total)+"/"+sel.length+(c.miss.length?", missing "+c.miss.map(p=>p.name).join(", "):"");if(c.ifn.length){const s2=document.createElement("span");s2.className="ifn";s2.textContent="; if needed: "+c.ifn.map(p=>p.name).join(", ");b.appendChild(s2)}}
+    else if(c.ifn.length){b.children[1].textContent=dur+" ";const s2=document.createElement("span");s2.className="ifn";s2.textContent="if needed: "+c.ifn.map(p=>p.name).join(", ");b.appendChild(s2)}
+    else b.children[1].textContent=dur;
     b.onclick=()=>{S.hlSource="windows";S.activeMeet=null;S.activeWin=S.activeWin===idx?null:idx;bestWindows();paintHeat();renderPlanCards()};
-    li.appendChild(b);box.appendChild(li)});
+    li.appendChild(b);
+    if(S.isOwner){const sb=document.createElement("button");sb.type="button";sb.className="linkish";sb.style.marginLeft="8px";sb.textContent="Schedule…";
+      const dur=+$("durSel").value;const end=(dur>1&&c.start+dur<=c.end)?c.start+dur:c.end;
+      sb.onclick=()=>openMeetDialog(null,{date:c.d,start:c.start,end,attendees:c.avail.map(p=>p.name)});li.appendChild(sb)}
+    box.appendChild(li)});
 }
 $("durSel").onchange=()=>{S.hlSource="windows";S.activeWin=null;bestWindows();paintHeat();renderPlanCards()};
 
@@ -707,18 +828,19 @@ function refreshGroup(){renderChips();bestWindows();paintHeat();renderExport();f
 function exportData(){
   const c=S.config;const ps=people().filter(p=>!p.example||S.demo);
   return{poll:{title:c.title,timezone:c.tz,type:isWeekly()?"recurring days of the week":"specific dates",days:c.dates.map(d=>isWeekly()?{weekday:dParts(d).dow}:{date:d,weekday:dParts(d).dow}),dayStart:hhmm(c.startMin),dayEnd:hhmm(c.endMin),slotMinutes:c.step},
-    respondents:ps.map(p=>{const r=rangesFor(p.slots),o={};for(const d in r)o[isWeekly()?dParts(d).dow:d]=r[d].map(x=>hhmm(x[0])+"-"+hhmm(x[1]));return{name:p.name,available:o}})};
+    respondents:ps.map(p=>{const fmt=set=>{const r=rangesFor(set),o={};for(const d in r)o[isWeekly()?dParts(d).dow:d]=r[d].map(x=>hhmm(x[0])+"-"+hhmm(x[1]));return o};const o={name:p.name,available:fmt(p.slots)};if(maybeOn())o.ifNeeded=fmt(p.maybe);return o})};
 }
 function promptText(selOnly,codes){
   const c=S.config;const ps=(selOnly?selectedPeople():people());
-  let s="Poll: "+c.title+"\nTime zone: "+c.tz+(isWeekly()?"\nDays offered (recurring, every week): ":"\nDays offered: ")+c.dates.map(dLabel).join(", ")+"\nHours offered each day: "+hhmm(c.startMin)+"-"+hhmm(c.endMin)+" in "+c.step+"-minute slots\n\nAvailability (times each person marked as FREE; anything else in the offered hours is unavailable or not answered):\n";
-  for(const p of ps){s+="\n"+p.name+":\n";const r=rangesFor(p.slots);const ds=Object.keys(r);if(!ds.length)s+="  (no available times)\n";for(const d of ds)s+="  "+dLabel(d)+(isWeekly()?(codes?" (date code "+d+")":""):" ("+d+")")+": "+rangeText(r[d])+"\n"}
+  let s="Poll: "+c.title+"\nTime zone: "+c.tz+(isWeekly()?"\nDays offered (recurring, every week): ":"\nDays offered: ")+c.dates.map(dLabel).join(", ")+"\nHours offered each day: "+hhmm(c.startMin)+"-"+hhmm(c.endMin)+" in "+c.step+"-minute slots\n\nAvailability (times each person marked as FREE"+(maybeOn()?"; \"if needed\" times are possible but less convenient, worth half":"")+"; anything else in the offered hours is unavailable or not answered):\n";
+  for(const p of ps){s+="\n"+p.name+":\n";const r=rangesFor(p.slots);const ds=Object.keys(r);if(!ds.length)s+="  (no available times)\n";for(const d of ds)s+="  "+dLabel(d)+(isWeekly()?(codes?" (date code "+d+")":""):" ("+d+")")+": "+rangeText(r[d])+"\n";
+    if(maybeOn()){const r2=rangesFor(p.maybe);for(const d of Object.keys(r2))s+="  If needed, "+dLabel(d)+(isWeekly()?"":" ("+d+")")+": "+rangeText(r2[d])+"\n"}}
   return s;
 }
 function csvText(){
   const ps=people();const q=v=>'"'+String(v).replace(/"/g,'""')+'"';
   let s=[...(isWeekly()?[]:["date"]),"weekday","start","end",...ps.map(p=>p.name)].map(q).join(",")+"\n";
-  for(const d of S.config.dates)for(const m of times()){const k=key(d,m);s+=[...(isWeekly()?[]:[d]),dParts(d).dow,hhmm(m),hhmm(m+S.config.step),...ps.map(p=>p.slots.has(k)?1:0)].map(q).join(",")+"\n"}
+  for(const d of S.config.dates)for(const m of times()){const k=key(d,m);s+=[...(isWeekly()?[]:[d]),dParts(d).dow,hhmm(m),hhmm(m+S.config.step),...ps.map(p=>scoreAt(p,k))].map(q).join(",")+"\n"}
   return s;
 }
 function renderExport(){if(!S.config)return;const t=promptText(false);$("exportPreview").textContent=t.length>3000?t.slice(0,3000)+"\n…":t}
@@ -737,13 +859,271 @@ document.querySelectorAll("[data-d]").forEach(b=>b.onclick=async()=>{const st=$(
 
 function renderPlanCards(){}
 
+/* ---------- scheduled meetings: add-to-calendar links, invite text, .ics ---------- */
+function meetings(){return S.config&&Array.isArray(S.config.meetings)?S.config.meetings:[]}
+function meetLink(m){return linkFor(S.eid)+"/m/"+m.id}
+function meetDate(m){return m.firstDate||m.date}
+function meetUtc(m){
+  const [y,mo,d]=meetDate(m).split("-").map(Number),tz=S.config.tz;
+  return{s:zonedToUtc(y,mo,d,Math.floor(m.start/60),m.start%60,tz),e:zonedToUtc(y,mo,d,Math.floor(m.end/60),m.end%60,tz)};
+}
+const utcStamp=ms=>new Date(ms).toISOString().replace(/[-:]/g,"").replace(/\.\d{3}/,"");
+const utcIso=ms=>new Date(ms).toISOString().replace(/\.\d{3}/,"");
+function longDate(iso){const t=new Date(iso+"T00:00:00Z");return t.toLocaleDateString("en-US",{timeZone:"UTC",weekday:"short",month:"short",day:"numeric",year:"numeric"})}
+function fmtRange(a,b){const s=fmt12(a),e=fmt12(b%1440);return(s.slice(-2)===e.slice(-2)?s.slice(0,-2):s)+"–"+e}
+function meetWhen(m){
+  const tzl=S.config.tz.replace(/_/g," ");
+  if(m.weekly)return"Every "+DOW[new Date(meetDate(m)+"T00:00:00Z").getUTCDay()]+", "+fmtRange(m.start,m.end)+" ("+tzl+"), starting "+longDate(meetDate(m));
+  return longDate(meetDate(m))+", "+fmtRange(m.start,m.end)+" ("+tzl+")";
+}
+function meetDetails(m){return[m.notes||"",(m.attendees&&m.attendees.length?"With: "+m.attendees.join(", "):""),"Scheduled with Times4Meeting: "+meetLink(m)].filter(Boolean).join("\n\n")}
+function googleUrl(m){const t=meetUtc(m);const q=new URLSearchParams({action:"TEMPLATE",text:m.title,dates:utcStamp(t.s)+"/"+utcStamp(t.e),details:meetDetails(m),location:m.location||"",ctz:S.config.tz});if(m.weekly)q.set("recur","RRULE:FREQ=WEEKLY");return"https://calendar.google.com/calendar/render?"+q.toString()}
+function outlookUrl(m,work){const t=meetUtc(m);const q=new URLSearchParams({path:"/calendar/action/compose",rru:"addevent",subject:m.title,startdt:utcIso(t.s),enddt:utcIso(t.e),body:meetDetails(m),location:m.location||""});return"https://"+(work?"outlook.office.com":"outlook.live.com")+"/calendar/0/deeplink/compose?"+q.toString()}
+function icsEscape(v){return String(v||"").replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\r?\n/g,"\\n")}
+function icsFold(line){const out=[];let s=line;while(s.length>73){out.push(s.slice(0,73));s=" "+s.slice(73)}out.push(s);return out.join("\r\n")}
+function icsFor(list){
+  const now=utcStamp(Date.now()),L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Times4Meeting//EN","CALSCALE:GREGORIAN","METHOD:PUBLISH"];
+  for(const m of list){const t=meetUtc(m);
+    L.push("BEGIN:VEVENT","UID:"+S.eid+"-"+m.id+"@times4meeting","DTSTAMP:"+now,"DTSTART:"+utcStamp(t.s),"DTEND:"+utcStamp(t.e),"SUMMARY:"+icsEscape(m.title));
+    if(m.location)L.push("LOCATION:"+icsEscape(m.location));
+    L.push("DESCRIPTION:"+icsEscape(meetDetails(m)),"URL:"+meetLink(m));
+    if(m.weekly)L.push("RRULE:FREQ=WEEKLY");
+    L.push("END:VEVENT")}
+  L.push("END:VCALENDAR");return L.map(icsFold).join("\r\n")+"\r\n";
+}
+function downloadIcs(list,name){
+  const blob=new Blob([icsFor(list)],{type:"text/calendar"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download=(name||"meeting").replace(/[^\w\- ]+/g,"").trim().replace(/\s+/g,"-").slice(0,60)+".ics";document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);
+}
+function appleUrl(m){return S.relay?S.relay.replace(/\/+$/,"")+"/ics/"+S.eid+"/"+m.id+".ics":meetLink(m)+"/ics"}
+function calLinks(m){return[["Google Calendar",googleUrl(m)],["Outlook.com",outlookUrl(m,false)],["Outlook (work/school)",outlookUrl(m,true)],["Apple / other calendar",appleUrl(m)]]}
+const escHtml=t=>String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+/* for email: each calendar gets its own link */
+function inviteEmailText(m){return[m.title,"When: "+meetWhen(m),m.location?"Where: "+m.location:"",m.notes||"","Add to your calendar:",...calLinks(m).map(([n,u])=>"• "+n+": "+u),(m.weekly?"(Outlook links add the first meeting only; Google and Apple add the weekly series.)":"")].filter(Boolean).join("\n")}
+function inviteEmailHtml(m){
+  const row=(k,v)=>v?"<div><b>"+k+":</b> "+escHtml(v).replace(/\n/g,"<br>")+"</div>":"";
+  return '<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5">'+
+    '<div style="font-size:16px;font-weight:bold">'+escHtml(m.title)+'</div>'+row("When",meetWhen(m))+row("Where",m.location)+(m.notes?"<div>"+escHtml(m.notes).replace(/\n/g,"<br>")+"</div>":"")+
+    '<div style="margin-top:8px"><b>Add to your calendar:</b> '+calLinks(m).map(([n,u])=>'<a href="'+escHtml(u)+'">'+escHtml(n)+'</a>').join(" &nbsp;·&nbsp; ")+'</div>'+
+    (m.weekly?'<div style="color:#666;font-size:12px">Outlook links add the first meeting only; Google and Apple add the weekly series.</div>':"")+'</div>';
+}
+/* for text messages: short, one link */
+function inviteText(m){return[m.title,meetWhen(m),m.location?"Where: "+m.location:"","Add to your calendar: "+meetLink(m)].filter(Boolean).join("\n")}
+async function copyRich(html,plain,btn){
+  try{
+    if(window.ClipboardItem&&navigator.clipboard.write){await navigator.clipboard.write([new ClipboardItem({"text/html":new Blob([html],{type:"text/html"}),"text/plain":new Blob([plain],{type:"text/plain"})})])}
+    else await navigator.clipboard.writeText(plain);
+    const o=btn.textContent;btn.textContent="Copied. Paste into your email";setTimeout(()=>btn.textContent=o,2200);
+  }catch(e){showTextFallback(plain)}
+}
+async function copyText(text,btn,done){try{await navigator.clipboard.writeText(text);const o=btn.textContent;btn.textContent=done||"Copied";setTimeout(()=>btn.textContent=o,1600)}catch(e){showTextFallback(text)}}
+function showTextFallback(text){const pre=$("meetFallback");pre.hidden=false;pre.textContent=text;const r=document.createRange();r.selectNodeContents(pre);const g=getSelection();g.removeAllRanges();g.addRange(r)}
+
+function renderMeetings(){
+  const ms=meetings(),panel=$("meetPanel"),org=S.isOwner;
+  $("schedBtn").hidden=!org;
+  panel.hidden=!ms.length;$("meetOrgTools").hidden=!org;$("meetFallback").hidden=true;
+  $("meetTitle").textContent=ms.length===1?"Scheduled meeting":"Scheduled meetings";
+  const ul=$("meetList");ul.innerHTML="";
+  const sorted=ms.slice().sort((a,b)=>meetDate(a)<meetDate(b)?-1:meetDate(a)>meetDate(b)?1:a.start-b.start);
+  for(const m of sorted){
+    const li=document.createElement("li");li.className="mitem"+(S.focusMeet===m.id?" focus":"");li.id="meet-"+m.id;
+    const main=document.createElement("div");main.className="mi-main";
+    const h=document.createElement("b");h.textContent=m.title;const w=document.createElement("div");w.className="mono small";w.textContent=meetWhen(m);
+    main.append(h,w);
+    if(m.location){const l=document.createElement("div");l.className="small muted";l.textContent="Where: "+m.location;main.append(l)}
+    if(m.attendees&&m.attendees.length){const l=document.createElement("div");l.className="small muted";l.textContent="With: "+m.attendees.join(", ");main.append(l)}
+    if(m.notes){const l=document.createElement("div");l.className="small";l.textContent=m.notes;main.append(l)}
+    const add=document.createElement("div");add.className="mi-add";
+    const lab=document.createElement("span");lab.className="small muted";lab.textContent="Add to calendar:";add.append(lab);
+    const mk=(txt,href)=>{const a=document.createElement("a");a.className="calbtn";a.href=href;a.target="_blank";a.rel="noopener";a.textContent=txt;add.append(a)};
+    mk("Google",googleUrl(m));mk("Outlook.com",outlookUrl(m,false));mk("Outlook (work/school)",outlookUrl(m,true));
+    const ib=document.createElement("button");ib.type="button";ib.className="calbtn";ib.textContent="Apple / other (.ics)";ib.onclick=()=>downloadIcs([m],m.title);add.append(ib);
+    li.append(main,add);
+    if(m.weekly){const n=document.createElement("div");n.className="small muted";n.textContent="Repeats weekly in Google and .ics. The Outlook buttons add the first meeting only.";li.append(n)}
+    if(org){
+      const t=document.createElement("div");t.className="mi-org";
+      const b=(txt,fn,cls)=>{const x=document.createElement("button");x.type="button";x.textContent=txt;if(cls)x.className=cls;x.onclick=()=>fn(x);t.append(x)};
+      b("Copy for email",x=>copyRich(inviteEmailHtml(m),inviteEmailText(m),x),"primary");
+      b("Copy for text message",x=>copyText(inviteText(m),x));
+      b("Edit",()=>openMeetDialog(m));
+      b("Delete",async()=>{if(await askConfirm({title:"Delete this meeting?",body:"“"+m.title+"” ("+meetWhen(m)+") will be removed from this poll. Anyone who already added it to their calendar keeps their copy.",ok:"Delete meeting"}))saveMeetings(meetings().filter(x=>x.id!==m.id))},"danger");
+      li.append(t);
+    }
+    ul.append(li);
+  }
+  if(S.wantIcs){const m=ms.find(x=>x.id===S.wantIcs);S.wantIcs=null;if(m){downloadIcs([m],m.title);const n=document.createElement("div");n.className="small";n.style.fontWeight="600";n.textContent="Your calendar file has downloaded. Open it to add the meeting to your calendar.";const li=$("meet-"+m.id);if(li)li.prepend(n)}}
+  if(S.focusMeet&&$("meet-"+S.focusMeet)){const el=$("meet-"+S.focusMeet);S.focusMeet=null;setTimeout(()=>el.scrollIntoView({behavior:"smooth",block:"center"}),50)}
+}
+$("meetCopyAll").onclick=()=>{const ms=meetings().slice().sort((a,b)=>meetDate(a)<meetDate(b)?-1:meetDate(a)>meetDate(b)?1:a.start-b.start);
+  copyRich(ms.map(inviteEmailHtml).join('<hr style="border:0;border-top:1px solid #ddd;margin:14px 0">'),ms.map(inviteEmailText).join("\n\n"),$("meetCopyAll"))};
+$("meetIcsAll").onclick=()=>downloadIcs(meetings(),S.config.title);
+$("meetAdd").onclick=()=>openMeetDialog(null);
+$("schedBtn").onclick=()=>openMeetDialog(null);
+
+async function saveMeetings(list){
+  const c=Object.assign({},S.events.get(S.eid)||S.config);c.meetings=list;c.updatedAt=new Date().toISOString();
+  try{await S.backend.saveEvent(S.eid,c);S.events.set(S.eid,c);refreshAll(false);return true}
+  catch(e){showTextFallback("Couldn't save the meeting ("+(e&&e.code||"error")+"). Only the organizer can schedule meetings.");return false}
+}
+
+/* the schedule dialog */
+let editingMeet=null;
+function timeOptions(sel,val){sel.innerHTML="";for(let m=0;m<=1440;m+=5){const o=document.createElement("option");o.value=m;o.textContent=m===1440?"12am (midnight)":fmt12(m).replace(/(\d)(am|pm)$/,"$1 $2");if(m===val)o.selected=true;sel.appendChild(o)}}
+function nextOnOrAfter(dow){let d=todayISO;for(let i=0;i<7;i++){if(new Date(d+"T00:00:00Z").getUTCDay()===dow)return d;d=addDays(d,1)}return todayISO}
+function openMeetDialog(m,pre){
+  editingMeet=m;const c=S.config,wk=isWeekly();
+  pre=pre||{};
+  $("mTitle").value=m?m.title:(pre.title||c.title);
+  const ds=$("mDate");ds.innerHTML="";for(const d of c.dates){const o=document.createElement("option");o.value=d;o.textContent=wk?DOW[new Date(d+"T00:00:00Z").getUTCDay()]+"s":longDate(d);ds.appendChild(o)}
+  ds.value=m?m.date:(pre.date||c.dates[0]);
+  const st=m?m.start:(pre.start!=null?pre.start:c.startMin),en=m?m.end:(pre.end!=null?pre.end:Math.min(st+60,1440));
+  timeOptions($("mStart"),st);timeOptions($("mEnd"),en);
+  $("mLoc").value=m?m.location||"":"";$("mNotes").value=m?m.notes||"":"";
+  $("mWeeklyRow").hidden=!wk;
+  if(wk){const dow=new Date(ds.value+"T00:00:00Z").getUTCDay();$("mFirst").value=m&&m.firstDate?m.firstDate:nextOnOrAfter(dow);$("mRepeat").checked=m?!!m.weekly:true}
+  const ppl=people().filter(p=>!p.example),box=$("mPeople");box.innerHTML="";
+  const chosen=new Set(m?m.attendees||[]:(pre.attendees||[]));
+  if(!ppl.length){box.textContent="No responses yet.";box.className="small muted"}else box.className="mpeople";
+  for(const p of ppl){const l=document.createElement("label");l.className="chip"+(chosen.has(p.name)?" on":"");const cb=document.createElement("input");cb.type="checkbox";cb.checked=chosen.has(p.name);cb.value=p.name;cb.onchange=()=>l.classList.toggle("on",cb.checked);l.append(cb,document.createTextNode(p.name));box.append(l)}
+  $("meetHead").textContent=m?"Edit meeting":"Schedule a meeting";$("mSave").textContent=m?"Save":"Add meeting";$("mStatus").textContent="";$("mStatus").classList.remove("err");
+  $("meetOv").hidden=false;setTimeout(()=>$("mTitle").focus(),0);
+}
+$("mDate").onchange=()=>{if(isWeekly()){const dow=new Date($("mDate").value+"T00:00:00Z").getUTCDay();$("mFirst").value=nextOnOrAfter(dow)}};
+$("mCancel").onclick=()=>{$("meetOv").hidden=true};
+$("meetOv").addEventListener("click",e=>{if(e.target===$("meetOv"))$("meetOv").hidden=true});
+$("meetOv").addEventListener("keydown",e=>{if(e.key==="Escape")$("meetOv").hidden=true});
+$("mSave").onclick=async()=>{
+  const st=$("mStatus");st.classList.remove("err");
+  const title=$("mTitle").value.trim(),start=+$("mStart").value,end=+$("mEnd").value,wk=isWeekly();
+  if(!title){st.textContent="Give the meeting a title.";st.classList.add("err");return}
+  if(end<=start){st.textContent="The end time must be after the start time.";st.classList.add("err");return}
+  if(wk){const f=$("mFirst").value;if(!f||new Date(f+"T00:00:00Z").getUTCDay()!==new Date($("mDate").value+"T00:00:00Z").getUTCDay()){st.textContent="The first date must fall on the chosen weekday.";st.classList.add("err");return}}
+  const m={id:editingMeet?editingMeet.id:Math.random().toString(36).slice(2,8),title:title.slice(0,120),date:$("mDate").value,start,end,
+    location:$("mLoc").value.trim().slice(0,300),notes:$("mNotes").value.trim().slice(0,1000),
+    attendees:[...$("mPeople").querySelectorAll("input:checked")].map(i=>i.value)};
+  if(wk){m.firstDate=$("mFirst").value;m.weekly=$("mRepeat").checked}
+  $("mSave").disabled=true;st.textContent="Saving…";
+  const list=meetings().filter(x=>x.id!==m.id).concat([m]);
+  const ok=await saveMeetings(list);$("mSave").disabled=false;
+  if(ok){$("meetOv").hidden=true;S.focusMeet=m.id;renderMeetings()}else{st.textContent="Couldn't save. Are you signed in as the organizer?";st.classList.add("err")}
+};
+
 /* ---------- calendar import ---------- */
 const drop=$("drop");
 ["dragover","dragenter"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("over")}));
 ["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,()=>drop.classList.remove("over")));
 let pendingFile=null;
-drop.addEventListener("drop",e=>{e.preventDefault();const f=e.dataTransfer&&e.dataTransfer.files[0];if(f){pendingFile=f;$("calStatus").textContent="Ready: "+f.name}});
-$("calFile").onchange=()=>{pendingFile=$("calFile").files[0]||null;if(pendingFile)$("calStatus").textContent="Ready: "+pendingFile.name};
+drop.addEventListener("drop",e=>{e.preventDefault();e.stopPropagation();const f=e.dataTransfer&&e.dataTransfer.files[0];if(f)importFile(f)});
+$("calFile").onchange=()=>{const f=$("calFile").files[0];$("calFile").value="";if(f)importFile(f)};
+$("quickIcs").onclick=()=>$("quickFile").click();
+$("quickFile").onchange=()=>{const f=$("quickFile").files[0];$("quickFile").value="";if(f)importFile(f)};
+/* drop a calendar file anywhere on an event page */
+let dragDepth=0;const hasFiles=e=>e.dataTransfer&&[...(e.dataTransfer.types||[])].includes("Files");
+window.addEventListener("dragenter",e=>{if(!hasFiles(e)||$("main").hidden)return;dragDepth++;$("dropOv").hidden=false});
+window.addEventListener("dragleave",e=>{if(!hasFiles(e))return;dragDepth=Math.max(0,dragDepth-1);if(!dragDepth)$("dropOv").hidden=true});
+window.addEventListener("dragover",e=>{if(hasFiles(e)&&!$("main").hidden)e.preventDefault()});
+window.addEventListener("drop",e=>{if(!hasFiles(e))return;e.preventDefault();dragDepth=0;$("dropOv").hidden=true;if($("main").hidden)return;const f=e.dataTransfer.files[0];if(f)importFile(f)});
+function clampBusy(list){return list.map(b=>({...b,start:Math.max(b.start,S.config.startMin),end:Math.min(b.end,S.config.endMin)})).filter(b=>b.end>b.start).sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:a.start-b.start)}
+async function importFile(f){
+  if(!S.config)return;
+  let buf=null;try{buf=new Uint8Array(await f.arrayBuffer())}catch(e){}
+  if(!buf){showImport("That file couldn't be opened.",false,true);return}
+  if(buf[0]===0x50&&buf[1]===0x4b&&buf[2]===0x03&&buf[3]===0x04){ // a .zip, e.g. Google Calendar's export
+    let texts=[];
+    try{texts=await icsFromZip(buf)}catch(e){showImport("That .zip couldn't be read"+(e&&e.message?" ("+e.message+")":"")+". Unzip it and drop in the .ics file instead.",false,true);return}
+    if(!texts.length){showImport("That .zip has no calendar (.ics) files inside.",false,true);return}
+    importCalendarText(texts,texts.length);return;
+  }
+  const txt=new TextDecoder().decode(buf);
+  if(!/BEGIN:VCALENDAR/i.test(txt)){showImport("That file isn't a calendar (.ics or .zip) file. Export your calendar and try again.",false,true);return}
+  importCalendarText(txt);
+}
+/* minimal .zip reader (stored + deflate) using the browser's built-in decompressor */
+async function icsFromZip(u8){
+  const dv=new DataView(u8.buffer,u8.byteOffset,u8.byteLength),n=u8.length;
+  let eocd=-1;for(let i=n-22;i>=Math.max(0,n-65557);i--){if(dv.getUint32(i,true)===0x06054b50){eocd=i;break}}
+  if(eocd<0)throw new Error("not a zip");
+  const count=dv.getUint16(eocd+10,true);let p=dv.getUint32(eocd+16,true);
+  const out=[];let total=0;const LIMIT=25*1024*1024;
+  for(let k=0;k<count;k++){
+    if(p+46>n||dv.getUint32(p,true)!==0x02014b50)throw new Error("damaged");
+    const method=dv.getUint16(p+10,true),csize=dv.getUint32(p+20,true),usize=dv.getUint32(p+24,true);
+    const nlen=dv.getUint16(p+28,true),xlen=dv.getUint16(p+30,true),clen=dv.getUint16(p+32,true),lho=dv.getUint32(p+42,true);
+    const name=new TextDecoder().decode(u8.subarray(p+46,p+46+nlen));p+=46+nlen+xlen+clen;
+    if(!/\.ics$/i.test(name)||/(^|\/)__MACOSX\//.test(name)||/(^|\/)\._/.test(name))continue;
+    if(dv.getUint32(lho,true)!==0x04034b50)throw new Error("damaged");
+    const start=lho+30+dv.getUint16(lho+26,true)+dv.getUint16(lho+28,true),data=u8.subarray(start,start+csize);
+    total+=usize;if(total>LIMIT)throw new Error("too large");
+    let bytes;
+    if(method===0)bytes=data;
+    else if(method===8){
+      if(typeof DecompressionStream==="undefined")throw new Error("this browser can't unzip");
+      const ds=new DecompressionStream("deflate-raw");const stream=new Blob([data]).stream().pipeThrough(ds);
+      bytes=new Uint8Array(await new Response(stream).arrayBuffer());if(bytes.length>LIMIT)throw new Error("too large");
+    }else throw new Error("unsupported compression");
+    const t=new TextDecoder().decode(bytes);if(/BEGIN:VCALENDAR/i.test(t))out.push(t);
+  }
+  return out;
+}
+function importCalendarText(txt,nCal){
+  let busy=[];try{for(const t of (Array.isArray(txt)?txt:[txt]))busy=busy.concat(parseICS(t))}catch(e){showImport("That calendar file couldn't be read. Try exporting it again.",false,true);return}
+  busy=clampBusy(busy).map(b=>({...b,use:true,src:"ics"}));
+  startImport(busy.concat(S.busy.filter(b=>b.src==="typed")));
+  const n=busy.length;
+  showImport(n?"Filled in from your calendar"+(nCal>1?" ("+nCal+" calendars)":"")+": free except "+n+" commitment"+(n===1?"":"s")+".":"No commitments found in this poll's days and hours, so you're marked free throughout. Use Undo if that's wrong.",!!n);
+}
+/* calendar link (via the organizer's relay) */
+const LINK_KEY="t4m.calLink";
+function savedLink(){try{return localStorage.getItem(LINK_KEY)||""}catch(e){return""}}
+function renderLinkBtn(){
+  $("linkWrap").hidden=!S.relay;const has=!!savedLink();
+  $("linkBtn").textContent=has?"Fill from my calendar":"Use calendar link…";$("linkBtn").classList.toggle("primary",has);$("linkEdit").hidden=!has;
+}
+function openLinkDialog(){
+  const ov=$("linkOv");$("linkInput").value=savedLink();$("linkForget").hidden=!savedLink();$("linkStatus").textContent="";$("linkStatus").classList.remove("err");
+  ov.hidden=false;setTimeout(()=>$("linkInput").focus(),0);
+}
+function closeLinkDialog(){$("linkOv").hidden=true}
+$("linkBtn").onclick=()=>{const l=savedLink();if(l)fillFromLink(l,null);else openLinkDialog()};
+$("linkEdit").onclick=openLinkDialog;
+$("linkCancel").onclick=closeLinkDialog;
+$("linkOv").addEventListener("click",e=>{if(e.target===$("linkOv"))closeLinkDialog()});
+$("linkOv").addEventListener("keydown",e=>{if(e.key==="Escape")closeLinkDialog();if(e.key==="Enter"&&e.target===$("linkInput"))$("linkGo").click()});
+$("linkForget").onclick=()=>{try{localStorage.removeItem(LINK_KEY)}catch(e){}$("linkInput").value="";$("linkForget").hidden=true;$("linkStatus").textContent="Forgotten on this device.";renderLinkBtn()};
+$("linkGo").onclick=()=>{
+  const l=$("linkInput").value.trim(),st=$("linkStatus");st.classList.remove("err");
+  if(!/^(https|webcals?):\/\//i.test(l)){st.textContent="Paste the full link, starting with https:// or webcal://";st.classList.add("err");return}
+  fillFromLink(l,st);
+};
+async function fillFromLink(link,st){
+  const busyBtn=$("linkBtn"),go=$("linkGo");busyBtn.disabled=go.disabled=true;
+  const say=(t,err)=>{if(st){st.textContent=t;st.classList.toggle("err",!!err)}else showImport(t,false,!!err)};
+  say("Reading your calendar…");
+  try{
+    const r=await fetch(S.relay,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({url:link}),cache:"no-store",referrerPolicy:"no-referrer"});
+    const txt=await r.text();
+    if(!r.ok){let m="";try{m=JSON.parse(txt).error}catch(e){}throw new Error(m||("The relay answered "+r.status+"."))}
+    if(st){try{if($("linkRemember").checked)localStorage.setItem(LINK_KEY,link);else localStorage.removeItem(LINK_KEY)}catch(e){}closeLinkDialog()}
+    renderLinkBtn();
+    importCalendarText(txt);
+  }catch(e){
+    const m=(e&&e.message&&!/Failed to fetch|NetworkError|Load failed/i.test(e.message))?e.message:"Couldn't reach the calendar relay. Check your connection and try again.";
+    if(st)say(m,true);else{showImport(m+" You can change the link under “link settings”.",false,true)}
+  }finally{busyBtn.disabled=go.disabled=false}
+}
+
+let importBase=null;
+function startImport(busy){pushUndo();if(importBase==null)importBase={yes:[...S.draft],maybe:[...S.draftMaybe]};S.busy=busy;renderBusy();applyBusy()}
+function applyBusy(){
+  const bk=busyKeys(),tk=busyKeys(true),base=importBase||{yes:[],maybe:[]};
+  if($("keepMarks").checked){S.draft=new Set(base.yes.filter(k=>!bk.has(k)&&!tk.has(k)));S.draftMaybe=new Set(base.maybe.concat(base.yes.filter(k=>tk.has(k))).filter(k=>!bk.has(k)))}
+  else{S.draft=new Set(allKeys().filter(k=>!bk.has(k)&&!tk.has(k)));S.draftMaybe=new Set([...tk].filter(k=>!bk.has(k)))}
+  paintMine();markDirty();
+}
+$("keepMarks").onchange=()=>{if(S.busy.length)applyBusy()};
+function showImport(text,canReview,isErr){$("importText").textContent=text;$("importReview").hidden=!canReview;$("importMsg").classList.toggle("err",!!isErr);$("importMsg").hidden=false}
+$("importReview").onclick=()=>{$("importBox").open=true;$("busyOut").scrollIntoView({behavior:"smooth",block:"center"})};
 
 function unfold(txt){return txt.replace(/\r\n/g,"\n").replace(/\n[ \t]/g,"")}
 function parseProp(line){const i=line.indexOf(":");if(i<0)return null;const head=line.slice(0,i),val=line.slice(i+1);const parts=head.split(";");const params={};for(const p of parts.slice(1)){const j=p.indexOf("=");if(j>0)params[p.slice(0,j).toUpperCase()]=p.slice(j+1)}return{name:parts[0].toUpperCase(),params,val}}
@@ -763,34 +1143,34 @@ function parseICS(txt){
     if(p.name==="DTSTART")cur.start=icsTime(p.val,p.params);else if(p.name==="DTEND")cur.end=icsTime(p.val,p.params);
     else if(p.name==="DURATION")cur.dur=parseDuration(p.val);else if(p.name==="RRULE")cur.rrule=p.val;
     else if(p.name==="SUMMARY")cur.summary=p.val.replace(/\\,/g,",").replace(/\\n/gi," ").replace(/\\;/g,";");
-    else if(p.name==="TRANSP")cur.transp=p.val.trim();else if(p.name==="STATUS")cur.status=p.val.trim();
+    else if(p.name==="X-MICROSOFT-CDO-BUSYSTATUS")cur.cdo=p.val.trim().toUpperCase();else if(p.name==="TRANSP")cur.transp=p.val.trim();else if(p.name==="STATUS")cur.status=p.val.trim();
     else if(p.name==="UID")cur.uid=p.val.trim();else if(p.name==="RECURRENCE-ID")cur.recur=icsTime(p.val,p.params);
     else if(p.name==="EXDATE")for(const v of p.val.split(","))cur.ex.push(icsTime(v,p.params));}
   const c=S.config,wk=isWeekly(),first=wk?todayISO:c.dates[0],last=wk?addDays(todayISO,6):c.dates[c.dates.length-1];
   const overrides=evs.filter(e=>e.recur&&e.uid);
   const out=[];
-  const pushTimed=(sMs,eMs,label)=>{ // split into poll wall-clock days
+  const pushTimed=(sMs,eMs,label,tent)=>{ // split into poll wall-clock days
     const a=utcToWall(sMs,c.tz),b=utcToWall(eMs,c.tz);
-    let d=a.date;for(let guard=0;guard<40;guard++){const st=d===a.date?a.min:0;const en=d===b.date?b.min:1440;if(en>st&&d>=first&&d<=last)out.push({date:d,start:st,end:en,label});if(d>=b.date)break;d=addDays(d,1)}
+    let d=a.date;for(let guard=0;guard<40;guard++){const st=d===a.date?a.min:0;const en=d===b.date?b.min:1440;if(en>st&&d>=first&&d<=last)out.push({date:d,start:st,end:en,label,tentative:!!tent});if(d>=b.date)break;d=addDays(d,1)}
   };
   for(const e of evs){
-    if(!e.start||e.transp==="TRANSPARENT"||e.status==="CANCELLED")continue;
-    const label=e.summary||"Busy";
+    if(!e.start||e.transp==="TRANSPARENT"||e.status==="CANCELLED"||e.cdo==="FREE")continue;
+    const label=e.summary||"Busy",tent=e.status==="TENTATIVE"||e.cdo==="TENTATIVE";
     if(e.start.allDay){const endD=e.end&&e.end.allDay?addDays(e.end.date,-1):e.start.date;
       const span=Math.max(0,dayDiff(e.start.date,endD));
       const occStarts=[e.start.date];
       if(e.rrule){for(const d of expandDates(e.start.date,e.rrule,last))if(d!==e.start.date)occStarts.push(d)}
-      for(const sd of occStarts)for(let i=0;i<=span;i++){const d=addDays(sd,i);if(d>=first&&d<=last)out.push({date:d,start:c.startMin,end:c.endMin,label:label+" (all day)",allDay:true})}
+      for(const sd of occStarts)for(let i=0;i<=span;i++){const d=addDays(sd,i);if(d>=first&&d<=last)out.push({date:d,start:c.startMin,end:c.endMin,label:label+" (all day)",allDay:true,tentative:tent})}
       continue}
     const dur=e.end&&e.end.ms!=null?e.end.ms-e.start.ms:(e.dur||36e5);
-    if(!e.rrule){pushTimed(e.start.ms,e.start.ms+dur,label);continue}
+    if(!e.rrule){pushTimed(e.start.ms,e.start.ms+dur,label,tent);continue}
     const tz=e.start.tz||"UTC";const w=e.start.wall||(()=>{const p=tzParts(e.start.ms,tz);return{y:p.y,mo:p.mo,d:p.d,h:p.h,mi:p.mi}})();
     const sDate=w.y+"-"+pad(w.mo)+"-"+pad(w.d);
     const exMs=e.ex.filter(Boolean).map(x=>x.ms!=null?x.ms:null).filter(x=>x!=null);
     for(const ov of overrides)if(ov.uid===e.uid&&ov.recur&&ov.recur.ms!=null)exMs.push(ov.recur.ms);
     for(const d of expandDates(sDate,e.rrule,addDays(last,1))){
       const [y,mo,dd]=d.split("-").map(Number);const sMs=zonedToUtc(y,mo,dd,w.h,w.mi,tz);
-      if(exMs.some(x=>Math.abs(x-sMs)<6e4))continue;pushTimed(sMs,sMs+dur,label)}
+      if(exMs.some(x=>Math.abs(x-sMs)<6e4))continue;pushTimed(sMs,sMs+dur,label,tent)}
   }
   if(wk)return out.map(b=>({...b,date:refDate(new Date(b.date+"T00:00:00Z").getUTCDay())})).filter(b=>c.dates.includes(b.date));
   return out;
@@ -845,7 +1225,8 @@ function parseTyped(text){
   for(let seg of String(text||"").split(/[\n;]+/)){
     const orig=seg.trim();if(!orig)continue;
     let s=" "+orig.toLowerCase().replace(/[–—]/g,"-")+" ";
-    const dows=new Set(),dates=new Set();
+    const dows=new Set(),dates=new Set();let tent=false;
+    s=s.replace(/\b(?:maybe|tentative(?:ly)?|if\s+needed|possibly|might)\b/g,()=>{tent=true;return" "});
     const eat=(rx,fn)=>{s=s.replace(rx,(...m)=>{fn(m);return" "})};
     // explicit dates
     eat(/\b(\d{4})-(\d{2})-(\d{2})\b/g,m=>dates.add(m[1]+"-"+m[2]+"-"+m[3]));
@@ -883,33 +1264,26 @@ function parseTyped(text){
       for(const d of c.dates)if(dows.has(new Date(d+"T00:00:00Z").getUTCDay()))set.add(d);
       days=(dows.size||dates.size)?[...set]:c.dates.slice();
     }
-    for(const d of days)for(const r of ranges)out.push({date:d,start:r[0],end:r[1],label:label||"Busy"});
+    for(const d of days)for(const r of ranges)out.push({date:d,start:r[0],end:r[1],label:label||"Busy",tentative:tent});
   }
   return out;
 }
-$("readCal").onclick=async()=>{
-  const st=$("calStatus");st.classList.remove("err");const typed=$("calText").value.trim();const f=pendingFile;
-  if(!f&&!typed){st.textContent="Choose a calendar file or type your commitments first.";st.classList.add("err");return}
-  $("readCal").disabled=true;st.textContent="Reading…";
-  try{let busy=[];
-    if(f){const txt=await f.text();busy=/BEGIN:VCALENDAR/i.test(txt)?parseICS(txt):parseTyped(txt)}
-    if(typed)busy=busy.concat(parseTyped(typed));
-    busy=busy.map(b=>({...b,start:Math.max(b.start,S.config.startMin),end:Math.min(b.end,S.config.endMin)})).filter(b=>b.end>b.start);
-    busy.sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:a.start-b.start);
-    S.busy=busy.map(b=>({...b,use:true}));renderBusy();
-    st.textContent=busy.length?"":(typed&&!f?"Nothing recognised inside the poll's days and hours. Try a format like \"Tue 2-3pm\".":"No commitments found inside the poll's days and hours.");}
-  catch(e){st.textContent="That file couldn't be read. Export it again as .ics, or type your commitments instead.";st.classList.add("err")}
-  finally{$("readCal").disabled=false}
+$("readCal").onclick=()=>{
+  const st=$("calStatus");st.classList.remove("err");const typed=$("calText").value.trim();
+  if(!typed){st.textContent="Type your commitments first, one per line.";st.classList.add("err");return}
+  const busy=clampBusy(parseTyped(typed)).map(b=>({...b,use:true,src:"typed"}));
+  if(!busy.length){st.textContent="Nothing recognised inside the poll's days and hours. Try a format like \"Tue 2-3pm\".";st.classList.add("err");return}
+  st.textContent="";
+  startImport(S.busy.filter(b=>b.src==="ics").concat(busy));
+  showImport("Applied "+busy.length+" typed commitment"+(busy.length===1?"":"s")+".",true);
 };
 function renderBusy(){
   const box=$("busyList");box.innerHTML="";$("busyOut").hidden=!S.busy.length;$("busyCount").textContent="("+S.busy.length+")";
   S.busy.forEach((b,i)=>{const l=document.createElement("label");l.innerHTML='<input type="checkbox"><span class="mono"></span><span></span>';
-    const cb=l.firstChild;cb.id="busy-"+i;cb.checked=b.use;cb.onchange=()=>{b.use=cb.checked};
-    l.children[1].textContent=dLabel(b.date)+" "+hhmm(b.start)+"–"+hhmm(b.end);l.children[2].textContent=b.label;box.appendChild(l)});
+    const cb=l.firstChild;cb.id="busy-"+i;cb.checked=b.use;cb.onchange=()=>{b.use=cb.checked;applyBusy()};
+    l.children[1].textContent=dLabel(b.date)+" "+hhmm(b.start)+"–"+hhmm(b.end);l.children[2].textContent=b.label+(b.tentative?(maybeOn()?" · tentative → if needed":" · tentative"):"");box.appendChild(l)});
 }
-function busyKeys(){const out=new Set(),step=S.config.step;for(const b of S.busy)if(b.use)for(const m of times())if(m<b.end&&m+step>b.start)out.add(key(b.date,m));return out}
-$("applyAll").onclick=()=>{const bk=busyKeys();pushUndo();S.draft=new Set(allKeys().filter(k=>!bk.has(k)));paintMine();markDirty();$("minePanel").scrollIntoView({behavior:"smooth",block:"start"})};
-$("applyRemove").onclick=()=>{const bk=busyKeys();pushUndo();for(const k of bk)S.draft.delete(k);paintMine();markDirty()};
+function busyKeys(tentOnly){const out=new Set(),step=S.config.step,mo=maybeOn();for(const b of S.busy)if(b.use&&(tentOnly?(mo&&b.tentative):!(mo&&b.tentative)))for(const m of times())if(m<b.end&&m+step>b.start)out.add(key(b.date,m));return out}
 
 /* ---------- demo ---------- */
 const DEMO=["Example · Ana","Example · Ben","Example · Chris","Example · Dana","Example · Eli"];
@@ -925,15 +1299,16 @@ function mergeResponses(){realResponses=new Map(S.eid?S.respDocs:[]);
 /* ---------- events & routing ---------- */
 function newEid(){const a="abcdefghjkmnpqrstuvwxyz23456789";let r="";for(let i=0;i<8;i++)r+=a[Math.floor(Math.random()*a.length)];return S.events.has(r)?newEid():r}
 const linkFor=eid=>location.origin+location.pathname+"#"+eid;
-function parseCfg(d){return d&&Array.isArray(d.dates)&&d.dates.length?{title:String(d.title||"Untitled event"),mode:d.mode==="weekdays"?"weekdays":"dates",dates:[...d.dates],startMin:+d.startMin,endMin:+d.endMin,step:+d.step||30,tz:d.tz||browserTz,note:d.note||"",createdAt:d.createdAt||""}:null}
-function hashEid(){const h=(location.hash||"").replace(/^#/,"");return /^[a-z0-9]{3,20}$/i.test(h)?h:null}
+function parseCfg(d){return d&&Array.isArray(d.dates)&&d.dates.length?{title:String(d.title||"Untitled event"),mode:d.mode==="weekdays"?"weekdays":"dates",dates:[...d.dates],startMin:+d.startMin,endMin:+d.endMin,step:+d.step||30,tz:d.tz||browserTz,note:d.note||"",ifNeeded:!!d.ifNeeded,hideGroup:!!d.hideGroup,createdAt:d.createdAt||"",meetings:Array.isArray(d.meetings)?d.meetings.filter(m=>m&&m.id&&typeof m.start==="number"&&typeof m.end==="number"&&m.date).slice(0,50):[]}:null}
+function hashEid(){const h=(location.hash||"").replace(/^#/,"").split("/")[0];return /^[a-z0-9]{3,20}$/i.test(h)?h:null}
+function hashMeet(){const m=/^#?[a-z0-9]{3,20}\/m\/([a-z0-9]{3,12})(\/ics)?$/i.exec(location.hash||"");if(m&&m[2])S.wantIcs=m[1];return m?m[1]:null}
 function go(eid){
   if(eid!==S.eid){S.eid=eid;S.target="me";S.hlSource="windows";S.filter=null;S.demo=false;S.plan=null;S.busy=[];S.highlight.clear();S.activeWin=null;S.activeMeet=null;S.dirty=false;builtFor="";
     $("busyOut").hidden=true;$("setup").hidden=true;subscribeEvent(eid);}
   try{if((location.hash||"").replace(/^#/,"")!==(eid||""))history.replaceState(null,"",eid?"#"+eid:location.pathname+location.search)}catch(e){}
   mergeResponses();refreshAll(true);window.scrollTo(0,0);
 }
-window.addEventListener("hashchange",()=>{const h=hashEid();if(h!==S.eid)go(h)});
+window.addEventListener("hashchange",()=>{const h=hashEid();S.focusMeet=hashMeet();if(h!==S.eid)go(h);else if(S.config)renderMeetings()});
 $("backBtn").onclick=()=>go(null);
 $("newEventBtn").onclick=()=>{S.eid=null;showSetup(false);$("cancelSetup").hidden=false;refreshViews()};
 $("copyLink").onclick=async()=>{const b=$("copyLink"),u=linkFor(S.eid);try{await navigator.clipboard.writeText(u);b.textContent="Copied";setTimeout(()=>b.textContent="Copy link",1500)}catch(e){$("shareRow").hidden=false;$("shareUrl").textContent=u;const r=document.createRange();r.selectNodeContents($("shareUrl"));const g=getSelection();g.removeAllRanges();g.addRange(r);$("linkStatus").textContent="Copying was blocked. Press Ctrl/Cmd+C."}};
@@ -975,10 +1350,11 @@ function fitGrids(){
   // line the two grids up: push the higher one down to match the lower one
   pb.style.marginTop="";hb.style.marginTop="";
   if(window.innerWidth<=900){document.documentElement.style.setProperty("--rowh","20px");return}
-  const dTop=Math.round(hb.getBoundingClientRect().top-pb.getBoundingClientRect().top);
+  const heatShown=!$("groupPanel").hidden;
+  const dTop=heatShown?Math.round(hb.getBoundingClientRect().top-pb.getBoundingClientRect().top):0;
   if(dTop>0)pb.style.marginTop=dTop+"px";else if(dTop<0)hb.style.marginTop=(-dTop)+"px";
   const hdr=Math.max(pg.firstChild?pg.firstChild.offsetHeight:30,30);
-  const top=Math.max(pg.getBoundingClientRect().top,hg.getBoundingClientRect().top)+window.scrollY+hdr;
+  const top=(heatShown?Math.max(pg.getBoundingClientRect().top,hg.getBoundingClientRect().top):pg.getBoundingClientRect().top)+window.scrollY+hdr;
   const avail=window.innerHeight-top-14;
   const h=Math.max(10,Math.min(22,Math.floor(avail/rows)));
   document.documentElement.style.setProperty("--rowh",h+"px");
@@ -997,6 +1373,21 @@ function refreshViews(){
   $("notReady").hidden=!(S.eid&&S.dbReady&&!found);$("loading").hidden=S.dbReady;
   $("main").hidden=!(S.eid&&found);
 }
+function renderHidden(){
+  const c=S.config,hid=!!(c&&c.hideGroup),restricted=hid&&!S.isOwner;
+  $("groupPanel").hidden=restricted;$("planPanel").hidden=restricted;$("exportPanel").hidden=restricted;
+  document.querySelector("#main .two").classList.toggle("solo",restricted);
+  $("hiddenNote").hidden=!restricted;
+  const t=$("hideToggle");t.hidden=!S.isOwner;t.classList.toggle("on",hid);
+  t.textContent=hid?"Hidden from respondents":"Visible to respondents";
+  t.title=hid?"Respondents see only their own answers. Click to show them the group view.":"Respondents can see everyone's answers. Click to hide the group view from them.";
+  $("privLine").textContent=hid?"Your name and marked times are saved in the organizer's database (Google Firebase). Only you and the organizer can see them.":"Your name and marked times are saved in the organizer's database (Google Firebase) and are visible to anyone with this event's link. Drag again over blue slots to remove them.";
+}
+$("hideToggle").onclick=async()=>{
+  const c=Object.assign({},S.events.get(S.eid)||S.config);c.hideGroup=!c.hideGroup;c.updatedAt=new Date().toISOString();
+  const t=$("hideToggle");t.disabled=true;
+  try{await S.backend.saveEvent(S.eid,c);S.events.set(S.eid,c);refreshAll(false)}catch(e){t.textContent="Couldn't change it ("+(e&&e.code||"error")+")"}finally{t.disabled=false}
+};
 function refreshAll(reloadTarget){
   S.config=S.eid?parseCfg(S.events.get(S.eid)):null;
   renderHeader();
@@ -1006,6 +1397,7 @@ function refreshAll(reloadTarget){
     renderHome();refreshViews();if(S.isOwner)refreshCounts();return}
   refreshViews();
   if(!S.config)return;
+  renderMeetings();renderBrush();renderHidden();
   const sig=JSON.stringify([S.eid,S.config.dates,S.config.startMin,S.config.endMin,S.config.step]);
   if(sig!==builtFor){buildGrid($("paintGrid"),"paint");buildGrid($("heatGrid"),"heat");builtFor=sig;reloadTarget=true;S.highlight.clear()}
   renderWho();
@@ -1018,23 +1410,36 @@ function refreshAll(reloadTarget){
 function clearSubs(){for(const u of S.unsubs)try{u()}catch(e){}S.unsubs=[]}
 function subscribeEvent(eid){
   if(!S.backend)return;
-  clearSubs();S.respDocs=new Map();S.evLoaded=false;S.respLoaded=false;
+  clearSubs();S.respDocs=new Map();S.evLoaded=false;S.respLoaded=false;S.respMode=null;S.respUnsub=null;
   if(!eid){S.dbReady=S.isOwner?S.eventsLoaded:true;if(S.isOwner)watchAllEvents();return}
   S.dbReady=false;
   const ready=()=>{if(S.evLoaded&&S.respLoaded&&!S.dbReady){S.dbReady=true;mergeResponses();refreshAll(true)}};
-  S.unsubs.push(S.backend.watchEvent(eid,data=>{
-    const c=parseCfg(data);if(c)S.events.set(eid,c);else S.events.delete(eid);
-    S.evLoaded=true;if(S.dbReady){mergeResponses();refreshAll(false)}else ready();
-  },()=>{S.events.delete(eid);S.evLoaded=true;S.respLoaded=true;ready();refreshAll(false)}));
-  S.unsubs.push(S.backend.watchResponses(eid,docs=>{
+  const onDocs=docs=>{
     {const prev=S.respDocs,next=new Map();for(const d of docs){if(!d.pending)next.set(d.id,d.data);else if(prev.has(d.id))next.set(d.id,prev.get(d.id))}S.respDocs=next;}
     S.respLoaded=true;
     if(!S.dbReady){ready();return}
     const mine=S.target==="me"?S.myId:S.target;const wasSaved=!S.dirty;
     mergeResponses();
-    if(S.config){renderWho();if(wasSaved){const r=mine&&S.responses.get(mine);if(r){S.draft=new Set(r.slots||[]);S.draftName=r.name||S.draftName;$("myName").value=S.draftName;paintMine();$("deleteResp").hidden=!(S.isOwner||mine===S.myId);updateRemoveLabel()}}refreshGroup()}
+    if(S.config){renderWho();if(wasSaved){const r=mine&&S.responses.get(mine);if(r){S.draft=new Set(r.slots||[]);S.draftMaybe=new Set(r.maybe||[]);S.draftName=r.name||S.draftName;$("myName").value=S.draftName;paintMine();$("deleteResp").hidden=!(S.isOwner||mine===S.myId);updateRemoveLabel()}}refreshGroup()}
     else refreshAll(false);
-  },()=>{S.respLoaded=true;ready()}));
+  };
+  // Respondents of a poll with hidden results may read only their own answer (the database rules enforce this too)
+  const watchResp=hidden=>{
+    const mode=hidden&&!S.isOwner?"own":"all";if(S.respMode===mode)return;
+    if(S.respUnsub)try{S.respUnsub()}catch(e){}
+    S.respMode=mode;S.respDocs=new Map();
+    const err=()=>{S.respLoaded=true;ready()};
+    S.respUnsub=mode==="own"
+      ?S.backend.watchResponse(eid,S.myId,d=>onDocs(d?[{id:S.myId,data:d.data,pending:d.pending}]:[]),err)
+      :S.backend.watchResponses(eid,onDocs,err);
+  };
+  S.unsubs.push(()=>{if(S.respUnsub)S.respUnsub();S.respUnsub=null;S.respMode=null});
+  S.unsubs.push(S.backend.watchEvent(eid,data=>{
+    const c=parseCfg(data);if(c)S.events.set(eid,c);else S.events.delete(eid);
+    S.evLoaded=true;
+    if(c)watchResp(!!c.hideGroup);else{S.respLoaded=true}
+    if(S.dbReady){mergeResponses();refreshAll(false)}else ready();
+  },()=>{S.events.delete(eid);S.evLoaded=true;S.respLoaded=true;ready();refreshAll(false)}));
 }
 function watchAllEvents(){
   S.unsubs.push(S.backend.watchEvents(list=>{
@@ -1079,11 +1484,11 @@ window.T4M_start=function(backend,problem){
     else showProblem("Couldn't connect",(problem||"The page couldn't reach its database.")+" Reload to try again.");
     return;
   }
-  S.backend=backend;S.myId=backend.uid;S.isOwner=!!backend.isOrganizer;S.canWrite=true;
+  S.backend=backend;S.relay=backend.relayUrl||null;renderLinkBtn();S.myId=backend.uid;S.isOwner=!!backend.isOrganizer;S.canWrite=true;
   try{const n=localStorage.getItem("t4m.name");if(n)S.draftName=n}catch(e){}
   $("myName").value=S.draftName||"";
   renderFoot();
-  S.eid=hashEid();
+  S.eid=hashEid();S.focusMeet=hashMeet();
   subscribeEvent(S.eid);
   refreshAll(true);
 };
@@ -1094,7 +1499,8 @@ window.T4M_start=function(backend,problem){
 const V="10.12.2",G="https://www.gstatic.com/firebasejs/"+V+"/";
 async function connect(){
   let cfg=null;
-  try{cfg=(await import("./firebase-config.js")).firebaseConfig}catch(e){}
+  let relayUrl=null;
+  try{const m=await import("./firebase-config.js");cfg=m.firebaseConfig;relayUrl=(typeof m.calendarRelay==="string"&&/^https:\/\//.test(m.calendarRelay))?m.calendarRelay:null}catch(e){}
   if(!cfg||!cfg.apiKey||/PASTE|YOUR_/i.test(cfg.apiKey)){window.T4M_start(null,"config");return}
   const [{initializeApp},A,F]=await Promise.all([import(G+"firebase-app.js"),import(G+"firebase-auth.js"),import(G+"firebase-firestore.js")]);
   const app=initializeApp(cfg),auth=A.getAuth(app),db=F.getFirestore(app);
@@ -1107,11 +1513,12 @@ async function connect(){
   if(!user.isAnonymous){try{await F.getDoc(F.doc(db,"meta","organizer"));isOrganizer=true}catch(e){}}
   const snapList=s=>s.docs.map(d=>({id:d.id,data:d.data()}));
   window.T4M_start({
-    uid:user.uid,isOrganizer,isAnonymous:user.isAnonymous,email:user.email||null,
+    uid:user.uid,isOrganizer,isAnonymous:user.isAnonymous,email:user.email||null,relayUrl,
     signIn:async()=>{await A.signInWithPopup(auth,new A.GoogleAuthProvider());location.reload()},
     signOut:async()=>{await A.signOut(auth);location.reload()},
     watchEvents:(cb,err)=>F.onSnapshot(F.collection(db,"events"),s=>cb(snapList(s)),err),
     watchEvent:(eid,cb,err)=>F.onSnapshot(F.doc(db,"events",eid),s=>cb(s.exists()?s.data():null),err),
+    watchResponse:(eid,rid,cb,err)=>F.onSnapshot(F.doc(db,"events",eid,"responses",rid),{includeMetadataChanges:true},s=>cb(s.exists()?{data:s.data(),pending:s.metadata.hasPendingWrites}:null),err),
     watchResponses:(eid,cb,err)=>F.onSnapshot(F.collection(db,"events",eid,"responses"),{includeMetadataChanges:true},s=>cb(s.docs.map(d=>({id:d.id,data:d.data(),pending:d.metadata.hasPendingWrites}))),err),
     saveEvent:(eid,data)=>F.setDoc(F.doc(db,"events",eid),data),
     deleteEvent:async eid=>{
